@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../../backend/lib/supabase.js";
+import { supabase } from "../lib/supabase.js";
 import "../styles/Register.css";
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,9 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    password: "",
+    fullName: "John Doe",
+    email: "test4124@gmail.com",
+    password: "admin123",
   });
 
   const handleRegister = async (e) => {

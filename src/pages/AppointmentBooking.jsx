@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import "../styles/AppointmentBooking.css";
-
+import { supabase } from "../lib/supabase.js";
 
 export default function AppointmentBooking() {
   const [selectedService, setSelectedService] = useState(null);
   const [selectedPrice, setSelectedPrice] = useState("");
   const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
+    fullName: "Test User",
+    email: "test232@gmail.com",
+    phone: "0912312332",
     date: "",
     time: "",
   });
@@ -53,32 +53,38 @@ export default function AppointmentBooking() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!selectedService) {
-      alert("Please select a skincare treatment first ✨");
-      return;
-    }
+  if (!selectedService) {
+    alert("Please select a skincare treatment first ✨");
+    return;
+  }
 
-    try {
-      await addDoc(collection(db, "appointments"), {
-        fullName: form.fullName,
+  try {
+    const { error } = await supabase.from("appointments").insert([
+      {
+        full_name: form.fullName,
         email: form.email,
         phone: form.phone,
         treatment: selectedService,
         price: selectedPrice,
-        appointmentDate: form.date,
-        appointmentTime: form.time,
+        appointment_date: form.date,
+        appointment_time: form.time,
         status: "Pending",
-        createdAt: new Date(),
-      });
+      },
+    ]);
 
-      setModalOpen(true);
-    } catch (err) {
-      alert("Firebase Error: " + err.message);
+    if (error) {
+      alert("Supabase Error: " + error.message);
+      return;
     }
-  };
+
+    setModalOpen(true);
+  } catch (err) {
+    alert("Unexpected Error: " + err.message);
+  }
+};
 
   const closeModal = () => {
     setModalOpen(false);

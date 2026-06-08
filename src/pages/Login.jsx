@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../../backend/lib/supabase.js";
+import { supabase } from "../lib/supabase.js";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"; // optional if you move styles out
 
@@ -8,7 +8,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
+  
  const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -16,6 +17,14 @@ export default function Login() {
       email,
       password,
     });
+    
+if (data.user) {
+  await supabase.from("profiles").insert({
+    id: data.user.id,
+    full_name: form.fullName,
+    role: "customer",
+  });
+}
 
     if (error) {
       alert(error.message);
