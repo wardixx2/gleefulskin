@@ -1,0 +1,151 @@
+:root {
+  --primary-pink: #ffb7b2;
+  --light-pink: #ffe5e5;
+  --dark-pink: #e0908a;
+  --rose-gold: #b76e79;
+  --charcoal: #333333;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #fff9f9;
+  color: var(--charcoal);
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background-color: var(--light-pink);
+  border-bottom: 2px solid var(--primary-pink);
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.header h1 {
+  color: var(--rose-gold);
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+}
+
+.header p {
+  color: var(--dark-pink);
+  font-style: italic;
+}
+
+/* LAYOUT */
+.register-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* CARD */
+.register-card {
+  background: var(--white);
+  border-radius: 15px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 20px rgba(255, 183, 178, 0.2);
+  border: 1px solid var(--light-pink);
+  width: 100%;
+  max-width: 420px;
+}
+
+h2 {
+  text-align: center;
+  color: var(--rose-gold);
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--light-pink);
+  padding-bottom: 0.5rem;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--rose-gold);
+}
+
+input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--primary-pink);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--rose-gold);
+  box-shadow: 0 0 5px rgba(183, 110, 121, 0.3);
+}
+
+/* PASSWORD TOGGLE */
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--dark-pink);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.toggle-password:hover {
+  color: var(--rose-gold);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  background-color: var(--rose-gold);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+button:hover {
+  background-color: var(--dark-pink);
+}
+
+/* FOOTER */
+.register-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.register-footer a {
+  color: var(--rose-gold);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.register-footer a:hover {
+  color: var(--dark-pink);
+  text-decoration: underline;
+}

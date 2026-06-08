@@ -1,0 +1,204 @@
+:root {
+  --primary-pink: #ffb7b2;
+  --light-pink: #ffe5e5;
+  --dark-pink: #e0908a;
+  --rose-gold: #b76e79;
+  --charcoal: #333333;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #fff9f9;
+  color: var(--charcoal);
+  line-height: 1.6;
+}
+
+/* HEADER */
+.header {
+  background-color: var(--light-pink);
+  border-bottom: 2px solid var(--primary-pink);
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+.header h1 {
+  color: var(--rose-gold);
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--dark-pink);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+/* LAYOUT */
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* CARD */
+.card {
+  background: var(--white);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 20px rgba(255, 183, 178, 0.2);
+  border: 1px solid var(--light-pink);
+}
+
+h2 {
+  color: var(--rose-gold);
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  border-bottom: 2px solid var(--light-pink);
+  padding-bottom: 0.5rem;
+}
+
+/* SERVICES */
+.service-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 2px solid var(--light-pink);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.service-option:hover {
+  border-color: var(--primary-pink);
+  background-color: #fff9f9;
+}
+
+.service-option.selected {
+  border-color: var(--rose-gold);
+  background-color: var(--light-pink);
+}
+
+.service-info h4 {
+  color: var(--charcoal);
+}
+
+.service-info p {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.price {
+  font-weight: bold;
+  color: var(--rose-gold);
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--rose-gold);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--primary-pink);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--rose-gold);
+  box-shadow: 0 0 5px rgba(183, 110, 121, 0.3);
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  background-color: var(--rose-gold);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: var(--dark-pink);
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 2.5rem;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  border: 3px solid var(--primary-pink);
+}
+
+.modal h3 {
+  color: var(--rose-gold);
+  margin-bottom: 1rem;
+}
+
+.close-btn {
+  background-color: var(--primary-pink);
+  margin-top: 1.5rem;
+}
+
+.close-btn:hover {
+  background-color: var(--dark-pink);
+}

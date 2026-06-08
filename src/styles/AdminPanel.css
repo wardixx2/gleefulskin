@@ -1,0 +1,141 @@
+:root {
+  --primary-pink: #ffb7b2;
+  --light-pink: #ffe5e5;
+  --dark-pink: #e0908a;
+  --rose-gold: #b76e79;
+  --charcoal: #333;
+  --white: #fff;
+  --sidebar-width: 260px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI";
+}
+
+/* LAYOUT */
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #fff9f9;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--light-pink);
+  border-right: 2px solid var(--primary-pink);
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-brand {
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--primary-pink);
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 1rem;
+}
+
+.sidebar-menu li {
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.sidebar-menu li:hover,
+.sidebar-menu li.active {
+  background: white;
+  color: var(--rose-gold);
+}
+
+.logout-section {
+  margin-top: auto;
+  padding: 1rem;
+}
+
+.logout-btn {
+  width: 100%;
+  background: var(--rose-gold);
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  cursor: pointer;
+}
+
+/* MAIN */
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  padding: 2rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--light-pink);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+/* CARDS */
+.card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--light-pink);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1rem;
+  border-left: 4px solid var(--rose-gold);
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: var(--light-pink);
+  color: var(--rose-gold);
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* BUTTONS */
+.approve-btn {
+  background: green;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+}
+
+.delete-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+}
