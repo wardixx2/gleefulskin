@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import "../styles/Register.css";
-import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -9,21 +9,19 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
-    fullName: "John Doe",
-    email: "test4124@gmail.com",
-    password: "admin123",
+    fullName: "",
+    email: "",
+    password: "",
   });
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    // 🚫 prevent spam clicks
     if (loading) return;
 
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -33,16 +31,26 @@ export default function Register() {
         },
       });
 
-      console.log("REGISTER CLICKED");
-
       if (error) {
         alert(error.message);
         return;
       }
 
-      alert("Account created!");
-      navigate("/login");
+      if (data?.user?.id) {
+        const role =
+          form.email.toLowerCase() === "admin@glow.com"
+            ? "admin"
+            : "customer";
 
+        await supabase.from("profiles").insert({
+          id: data.user.id,
+          full_name: form.fullName,
+          role,
+        });
+      }
+
+      alert("Account created! Please log in to continue.");
+      navigate("/login");
     } finally {
       setLoading(false);
     }
@@ -51,7 +59,7 @@ export default function Register() {
   return (
     <div className="page">
       <header className="header">
-        <h1>Glow & Bloom</h1>
+        <h1>GLEEFUL   </h1>
         <p>Skin Wellness Center • Radiance Awaits You</p>
       </header>
 
@@ -65,6 +73,7 @@ export default function Register() {
             <div className="form-group">
               <label>Full Name</label>
               <input
+                type="text"
                 value={form.fullName}
                 onChange={(e) =>
                   setForm({ ...form, fullName: e.target.value })
@@ -78,6 +87,7 @@ export default function Register() {
             <div className="form-group">
               <label>Email Address</label>
               <input
+                type="email"
                 value={form.email}
                 onChange={(e) =>
                   setForm({ ...form, email: e.target.value })
@@ -91,8 +101,8 @@ export default function Register() {
             <div className="form-group">
               <label>Password</label>
               <input
-                value={form.password}
                 type="password"
+                value={form.password}
                 onChange={(e) =>
                   setForm({ ...form, password: e.target.value })
                 }
@@ -108,10 +118,7 @@ export default function Register() {
           </form>
 
           <div className="register-footer">
-            Already have an account?{" "}
-            <span onClick={() => navigate("/login")} style={{ cursor: "pointer" }}>
-              Log In
-            </span>
+            Already have an account? <Link to="/login">Log In</Link>
           </div>
         </div>
       </div>
