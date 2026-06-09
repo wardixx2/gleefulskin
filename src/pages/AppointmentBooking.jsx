@@ -35,7 +35,7 @@ export default function AppointmentBooking() {
     {
       name: "Laser Skin Rejuvenation",
       desc: "75 mins • Anti-aging & collagen boost",
-      price: "$150",
+      price: "$1500",
     },
     {
       name: "Radiant Chemical Peel",
