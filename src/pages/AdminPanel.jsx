@@ -2,8 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import "../styles/AdminPanel.css";
 import { supabase } from "../lib/supabase.js";
+import TreatmentsPanel from "./TreatmentsPanel.jsx";
 
-export default function AdminPanel({ session, profile }) {
   const [section, setSection] = useState("dashboard");
   const [appointments, setAppointments] = useState([]);
   const [users, setUsers] = useState([]);
@@ -86,13 +86,19 @@ export default function AdminPanel({ session, profile }) {
         </div>
 
         <div className="sidebar-menu">
-          {["dashboard", "appointments", "users", "settings"].map((item) => (
+          {[
+            "dashboard",
+            "appointments",
+            "users",
+            "treatments",
+            "settings",
+          ].map((item) => (
             <button
               key={item}
               className={section === item ? "active" : ""}
               onClick={() => setSection(item)}
             >
-              {item.toUpperCase()}
+              {item === "treatments" ? "TREATMENTS" : item.toUpperCase()}
             </button>
           ))}
         </div>
@@ -232,6 +238,11 @@ export default function AdminPanel({ session, profile }) {
           </div>
         )}
 
+        {/* TREATMENTS */}
+        {section === "treatments" && (
+          <TreatmentsPanel onRefreshed={refreshData} />
+        )}
+
         {/* SETTINGS */}
         {section === "settings" && (
           <div className="card">
@@ -255,4 +266,3 @@ export default function AdminPanel({ session, profile }) {
       </main>
     </div>
   );
-}

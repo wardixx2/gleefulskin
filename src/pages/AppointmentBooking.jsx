@@ -38,43 +38,40 @@ export default function AppointmentBooking({ session, profile }) {
     }));
   }, [session, profile]);
 
-  // Your updated services array with Peso formatting
-  const services = [
-    {
-      name: "Signature Glow Facial",
-      desc: "60 mins • Deep cleansing & hydration",
+  const [services, setServices] = useState([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
 
-      price: "₱750",
+  const formatPeso = (value) => {
+    if (value === null || value === undefined || value === "") return "₱0";
+    const num = typeof value === "number" ? value : Number(value);
+    if (Number.isNaN(num)) return "₱0";
+    return `₱${num.toLocaleString("en-PH")}`;
+  };
 
+  useEffect(() => {
+    const loadTreatments = async () => {
+      setServicesLoading(true);
 
-    },
-    {
-      name: "Acne Clarifying Therapy",
-      desc: "45 mins • Target blemishes & redness",
+      const { data, error } = await supabase
+        .from("treatments")
+        .select("id, name, price, ors_required, ors_number, ors_amount")
+        .eq("active", true)
+        .order("created_at", { ascending: true });
 
-      price: "₱900",
+      if (error) {
+        console.error("Failed to load treatments:", error.message);
+        setServices([]);
+      } else {
+        setServices(data || []);
+      }
+      setServicesLoading(false);
+    };
 
-    },
-    {
-      name: "Laser Skin Rejuvenation",
-      desc: "75 mins • Anti-aging & collagen boost",
-
-      price: "₱1500",
-
-    },
-    {
-      name: "Radiant Chemical Peel",
-      desc: "30 mins • Exfoliation & skin brightening",
-
-      price: "₱1100",
-
-     
-    },
-  ];
+    loadTreatments();
+  }, []);
 
   const handleSelectService = (service) => {
-    setSelectedService(service.name);
-    setSelectedPrice(service.price);
+    setSelectedService(service);
   };
 
   const handleChange = (e) => {
@@ -101,8 +98,15 @@ export default function AppointmentBooking({ session, profile }) {
           full_name: form.fullName,
           email: form.email,
           phone: form.phone,
-          treatment: selectedService,
-          price: selectedPrice,
+
+          treatment: selectedService.name,
+          price: formatPeso(selectedService.price),
+
+          // snapshot ORS config for record consistency (nullable columns)
+          ors_required: selectedService.ors_required,
+          ors_number: selectedService.ors_number,
+          ors_amount: selectedService.ors_amount,
+
           appointment_date: form.date,
           appointment_time: form.time,
           status: "Pending",
@@ -123,7 +127,6 @@ export default function AppointmentBooking({ session, profile }) {
   const closeModal = () => {
     setModalOpen(false);
     setSelectedService(null);
-    setSelectedPrice("");
     setForm({
       fullName: profile?.full_name || "",
       email: session?.user?.email || "",
@@ -173,21 +176,35 @@ export default function AppointmentBooking({ session, profile }) {
           <div className="grid">
             <div className="card">
               <h2>1. Select a Treatment</h2>
-              {services.map((s, i) => (
-                <div
-                  key={i}
-                  className={`service-option ${
-                    selectedService === s.name ? "selected" : ""
-                  }`}
-                  onClick={() => handleSelectService(s)}
-                >
-                  <div className="service-info">
-                    <h4>{s.name}</h4>
-                    <p>{s.desc}</p>
+              {servicesLoading ? (
+                <p>Loading treatments...</p>
+              ) : services.length === 0 ? (
+                <p>No treatments available.</p>
+              ) : (
+                services.map((s) => (
+                  <div
+                    key={s.id}
+                    className={`service-option ${
+                      selectedService?.id === s.id ? "selected" : ""
+                    }`}
+                    onClick={() => handleSelectService(s)}
+                  >
+                    <div className="service-info">
+                      <h4>{s.name}</h4>
+                      <p>
+                        {s.ors_required ? (
+                          <>
+                            ORS Required • ORS No: {s.ors_number || "-"}
+                          </>
+                        ) : (
+                          "ORS not required"
+                        )}
+                      </p>
+                    </div>
+                    <span className="price">{formatPeso(s.price)}</span>
                   </div>
-                  <span className="price">{s.price}</span>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <div className="card">
@@ -271,11 +288,20 @@ export default function AppointmentBooking({ session, profile }) {
             <p>
               Service:{" "}
               <span style={{ color: "#B76E79", fontWeight: "bold" }}>
-                {selectedService}
+                {selectedService?.name}
               </span>
             </p>
             <p>🗓️ Date: {form.date}</p>
             <p>⏰ Time: {form.time}</p>
+
+            {selectedService?.ors_required ? (
+              <p>
+                💊 ORS Required • No: {selectedService?.ors_number || "-"} • Amount: {formatPeso(selectedService?.ors_amount)}
+              </p>
+            ) : (
+              <p>💧 ORS not required for this treatment</p>
+            )}
+
             <button className="close-btn" onClick={closeModal}>
               Wonderful!
             </button>
@@ -285,3 +311,4 @@ export default function AppointmentBooking({ session, profile }) {
     </div>
   );
 }
+
