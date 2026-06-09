@@ -43,38 +43,32 @@ export default function AppointmentBooking({ session, profile }) {
     {
       name: "Signature Glow Facial",
       desc: "60 mins • Deep cleansing & hydration",
-<<<<<<< HEAD
+
       price: "₱750",
-=======
-      price: "₱75",
->>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
+
+
     },
     {
       name: "Acne Clarifying Therapy",
       desc: "45 mins • Target blemishes & redness",
-<<<<<<< HEAD
+
       price: "₱900",
-=======
-      price: "₱90",
->>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
+
     },
     {
       name: "Laser Skin Rejuvenation",
       desc: "75 mins • Anti-aging & collagen boost",
-<<<<<<< HEAD
+
       price: "₱1500",
-=======
-      price: "₱150",
->>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
+
     },
     {
       name: "Radiant Chemical Peel",
       desc: "30 mins • Exfoliation & skin brightening",
-<<<<<<< HEAD
+
       price: "₱1100",
-=======
-      price: "₱110",
->>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
+
+     
     },
   ];
 
