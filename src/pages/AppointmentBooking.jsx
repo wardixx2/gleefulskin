@@ -13,6 +13,7 @@ export default function AppointmentBooking({ session, profile }) {
     await supabase.auth.signOut();
     navigate("/login");
   };
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -37,26 +38,27 @@ export default function AppointmentBooking({ session, profile }) {
     }));
   }, [session, profile]);
 
+  // Your updated services array with Peso formatting
   const services = [
     {
       name: "Signature Glow Facial",
       desc: "60 mins • Deep cleansing & hydration",
-      price: "P75",
+      price: "₱75",
     },
     {
       name: "Acne Clarifying Therapy",
       desc: "45 mins • Target blemishes & redness",
-      price: "P90",
+      price: "₱90",
     },
     {
       name: "Laser Skin Rejuvenation",
       desc: "75 mins • Anti-aging & collagen boost",
-      price: "P150",
+      price: "₱150",
     },
     {
       name: "Radiant Chemical Peel",
       desc: "30 mins • Exfoliation & skin brightening",
-      price: "P110",
+      price: "₱110",
     },
   ];
 
@@ -152,101 +154,101 @@ export default function AppointmentBooking({ session, profile }) {
       </aside>
 
       <main className="dashboard-main">
-          <div className="page-header card">
-            <h1>Book Your Glow Session</h1>
-            <p>Choose the perfect treatment and lock in your next radiant appointment.</p>
-          </div>
+        <div className="page-header card">
+          <h1>Book Your Glow Session</h1>
+          <p>Choose the perfect treatment and lock in your next radiant appointment.</p>
+        </div>
 
-          <div className="container">
-            <div className="grid">
-              <div className="card">
-                <h2>1. Select a Treatment</h2>
-                {services.map((s, i) => (
-                  <div
-                    key={i}
-                    className={`service-option ${
-                      selectedService === s.name ? "selected" : ""
-                    }`}
-                    onClick={() => handleSelectService(s)}
+        <div className="container">
+          <div className="grid">
+            <div className="card">
+              <h2>1. Select a Treatment</h2>
+              {services.map((s, i) => (
+                <div
+                  key={i}
+                  className={`service-option ${
+                    selectedService === s.name ? "selected" : ""
+                  }`}
+                  onClick={() => handleSelectService(s)}
+                >
+                  <div className="service-info">
+                    <h4>{s.name}</h4>
+                    <p>{s.desc}</p>
+                  </div>
+                  <span className="price">{s.price}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="card">
+              <h2>2. Your Details</h2>
+
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Full Name</label>
+                  <input
+                    name="fullName"
+                    value={form.fullName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Email Address</label>
+                  <input
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Phone Number</label>
+                  <input
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Preferred Date</label>
+                  <input
+                    id="date"
+                    type="date"
+                    name="date"
+                    value={form.date}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Preferred Time</label>
+                  <select
+                    name="time"
+                    value={form.time}
+                    onChange={handleChange}
+                    required
                   >
-                    <div className="service-info">
-                      <h4>{s.name}</h4>
-                      <p>{s.desc}</p>
-                    </div>
-                    <span className="price">{s.price}</span>
-                  </div>
-                ))}
-              </div>
+                    <option value="">Select a time slot</option>
+                    <option>09:00 AM</option>
+                    <option>10:30 AM</option>
+                    <option>01:00 PM</option>
+                    <option>02:30 PM</option>
+                    <option>04:00 PM</option>
+                  </select>
+                </div>
 
-              <div className="card">
-                <h2>2. Your Details</h2>
-
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label>Full Name</label>
-                    <input
-                      name="fullName"
-                      value={form.fullName}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Email Address</label>
-                    <input
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Phone Number</label>
-                    <input
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Preferred Date</label>
-                    <input
-                      id="date"
-                      type="date"
-                      name="date"
-                      value={form.date}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Preferred Time</label>
-                    <select
-                      name="time"
-                      value={form.time}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Select a time slot</option>
-                      <option>09:00 AM</option>
-                      <option>10:30 AM</option>
-                      <option>01:00 PM</option>
-                      <option>02:30 PM</option>
-                      <option>04:00 PM</option>
-                    </select>
-                  </div>
-
-                  <button type="submit">Book My Glow Session</button>
-                </form>
-              </div>
+                <button type="submit">Book My Glow Session</button>
+              </form>
             </div>
           </div>
+        </div>
       </main>
 
       {modalOpen && (
@@ -257,7 +259,8 @@ export default function AppointmentBooking({ session, profile }) {
               Thank you, <strong>{form.fullName}</strong>!
             </p>
             <p>
-              Service: <span style={{ color: "#B76E79", fontWeight: "bold" }}>
+              Service:{" "}
+              <span style={{ color: "#B76E79", fontWeight: "bold" }}>
                 {selectedService}
               </span>
             </p>
