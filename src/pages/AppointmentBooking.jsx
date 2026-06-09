@@ -25,22 +25,22 @@ export default function AppointmentBooking() {
     {
       name: "Signature Glow Facial",
       desc: "60 mins • Deep cleansing & hydration",
-      price: "$75",
+      price: "P75",
     },
     {
       name: "Acne Clarifying Therapy",
       desc: "45 mins • Target blemishes & redness",
-      price: "$90",
+      price: "P90",
     },
     {
       name: "Laser Skin Rejuvenation",
       desc: "75 mins • Anti-aging & collagen boost",
-      price: "$150",
+      price: "P150",
     },
     {
       name: "Radiant Chemical Peel",
       desc: "30 mins • Exfoliation & skin brightening",
-      price: "$110",
+      price: "P110",
     },
   ];
 
