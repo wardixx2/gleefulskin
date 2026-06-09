@@ -1,259 +1,258 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/AdminPanel.css";
+import { supabase } from "../lib/supabase.js";
 
-export default function AdminPanel() {
+export default function AdminPanel({ session, profile }) {
   const [section, setSection] = useState("dashboard");
   const [appointments, setAppointments] = useState([]);
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // 🔥 Auth guard
+  const navigate = useNavigate();
+
+  // 🔐 AUTH GUARD
   useEffect(() => {
-    if (
-      sessionStorage.getItem("isLoggedIn") !== "true" ||
-      sessionStorage.getItem("userRole") !== "admin"
-    ) {
-      alert("🛑 Access Denied! Admin login required.");
-      window.location.href = "login.html";
+    if (profile && profile.role !== "admin") {
+      navigate("/dashboard");
     }
-  }, []);
+  }, [profile, navigate]);
 
-  // 🔥 Firestore realtime appointments
+  // 📦 LOAD DATA
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "appointments"), (snapshot) => {
-      const data = snapshot.docs.map((d) => ({
-        id: d.id,
-        ...d.data(),
-      }));
-      setAppointments(data);
-    });
+    const loadData = async () => {
+      if (!session?.user?.id) return;
 
-    return () => unsub();
-  }, []);
+      setLoading(true);
 
-  // 🔥 Load localStorage users
-  useEffect(() => {
-    const loadUsers = () => {
-      const stored = JSON.parse(localStorage.getItem("usersList")) || [];
-      setUsers(stored);
+      const [{ data: appointmentsData }, { data: usersData }] =
+        await Promise.all([
+          supabase.from("appointments").select("*").order("created_at", { ascending: false }),
+          supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        ]);
+
+      setAppointments(appointmentsData || []);
+      setUsers(usersData || []);
+      setLoading(false);
     };
 
-    loadUsers();
-    window.addEventListener("storage", loadUsers);
-    return () => window.removeEventListener("storage", loadUsers);
-  }, []);
+    loadData();
+  }, [session]);
 
-  // 📌 Appointment actions
+  // 🔄 REFRESH
+  const refreshData = async () => {
+    setLoading(true);
+
+    const [{ data: appointmentsData }, { data: usersData }] =
+      await Promise.all([
+        supabase.from("appointments").select("*").order("created_at", { ascending: false }),
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+      ]);
+
+    setAppointments(appointmentsData || []);
+    setUsers(usersData || []);
+    setLoading(false);
+  };
+
+  // ✏️ UPDATE STATUS
   const updateStatus = async (id, status) => {
-    await updateDoc(doc(db, "appointments", id), { status });
+    await supabase.from("appointments").update({ status }).eq("id", id);
+    refreshData();
   };
 
+  // 🗑️ DELETE
   const deleteAppointment = async (id) => {
-    if (confirm("Delete this appointment?")) {
-      await deleteDoc(doc(db, "appointments", id));
-    }
+    if (!confirm("Delete this appointment?")) return;
+
+    await supabase.from("appointments").delete().eq("id", id);
+    refreshData();
   };
 
-  // 📌 User delete
-  const deleteUser = (index) => {
-    if (!confirm("Delete this user?")) return;
-
-    const updated = [...users];
-    updated.splice(index, 1);
-    setUsers(updated);
-    localStorage.setItem("usersList", JSON.stringify(updated));
-  };
-
-  const logout = () => {
-    sessionStorage.clear();
-    window.location.href = "login.html";
+  // 🚪 LOGOUT
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   return (
-    <div className="admin-wrapper">
+    <div className="admin-layout">
 
       {/* SIDEBAR */}
-      <div className="sidebar">
+      <aside className="admin-sidebar">
+
         <div className="sidebar-brand">
-          <h2>Glow & Bloom</h2>
-          <p>Admin Panel 👑</p>
+          <h2>GLEEFUL</h2>
+          <p>Admin</p>
         </div>
 
-        <ul className="sidebar-menu">
-          {["dashboard", "appointments", "users", "settings"].map((s) => (
-            <li
-              key={s}
-              className={section === s ? "active" : ""}
-              onClick={() => setSection(s)}
+        <div className="sidebar-menu">
+          {["dashboard", "appointments", "users", "settings"].map((item) => (
+            <button
+              key={item}
+              className={section === item ? "active" : ""}
+              onClick={() => setSection(item)}
             >
-              {s.toUpperCase()}
-            </li>
+              {item.toUpperCase()}
+            </button>
           ))}
-        </ul>
+        </div>
 
-        <div className="logout-section">
-          <button className="logout-btn" onClick={logout}>
-            Log Out
+        <div className="sidebar-footer">
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
           </button>
         </div>
-      </div>
 
-      {/* MAIN CONTENT */}
-      <div className="main-content">
+      </aside>
+
+      {/* MAIN */}
+      <main className="admin-main">
 
         {/* HEADER */}
-        <div className="content-header">
+        <div className="admin-header">
           <h1>
             {{
               dashboard: "Dashboard Overview",
-              appointments: "Appointments Tracker",
-              users: "Registered Users",
-              settings: "Shop Settings",
+              appointments: "Appointment Management",
+              users: "User Management",
+              settings: "System Settings",
             }[section]}
           </h1>
 
-          <span>Hello, Admin ✨</span>
+          <p>
+            Welcome back, <span className="highlight">{profile?.full_name || "Admin"}</span>
+          </p>
         </div>
 
         {/* DASHBOARD */}
         {section === "dashboard" && (
-          <>
-            <div className="stats-grid">
-              <div className="stat-card">
-                <h3>Total Customers</h3>
-                <p>{users.length}</p>
-              </div>
+          <div className="stats-grid">
 
-              <div className="stat-card">
-                <h3>Appointments</h3>
-                <p>{appointments.length}</p>
-              </div>
+            <div className="stat-card">
+              <h3>Total Users</h3>
+              <p>{users.length}</p>
             </div>
 
-            <div className="card">
-              Welcome to your Admin Dashboard 💅
+            <div className="stat-card">
+              <h3>Total Appointments</h3>
+              <p>{appointments.length}</p>
             </div>
-          </>
+
+          </div>
         )}
 
         {/* APPOINTMENTS */}
         {section === "appointments" && (
           <div className="card">
-            <h3>Appointments</h3>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Contact</th>
-                  <th>Service</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
+            <div className="card-header">
+              <h3>All Appointments</h3>
+              <button onClick={refreshData}>Refresh</button>
+            </div>
 
-              <tbody>
-                {appointments.length === 0 ? (
-                  <tr>
-                    <td colSpan="6">No appointments yet</td>
-                  </tr>
-                ) : (
-                  appointments.map((a) => (
-                    <tr key={a.id}>
-                      <td>{a.fullName}</td>
-                      <td>{a.email}</td>
-                      <td>{a.treatment}</td>
-                      <td>
-                        {a.appointmentDate} <br />
-                        <small>{a.appointmentTime}</small>
-                      </td>
-                      <td>{a.status}</td>
-                      <td>
-                        {a.status === "Pending" && (
-                          <button
-                            className="approve-btn"
-                            onClick={() =>
-                              updateStatus(a.id, "Approved")
-                            }
-                          >
-                            Approve
-                          </button>
-                        )}
+            {loading ? (
+              <div className="empty-state">
+                <h3>Loading appointments...</h3>
+              </div>
+            ) : appointments.length === 0 ? (
+              <div className="empty-state">
+                <h3>No appointments yet</h3>
+                <p>Bookings will appear here once users start scheduling.</p>
+              </div>
+            ) : (
+              <div className="appointments-list">
 
+                {appointments.map((a) => (
+                  <div key={a.id} className="appointment-item">
+
+                    <div className="appointment-info">
+                      <strong>{a.full_name}</strong>
+                      <p>{a.treatment}</p>
+                      <p>
+                        {a.appointment_date} • {a.appointment_time}
+                      </p>
+                      <p className={`status-pill ${a.status.toLowerCase()}`}>
+                        {a.status}
+                      </p>
+                    </div>
+
+                    <div className="appointment-actions">
+                      {a.status === "Pending" && (
                         <button
-                          className="delete-btn"
-                          onClick={() => deleteAppointment(a.id)}
+                          className="action-button"
+                          onClick={() => updateStatus(a.id, "Approved")}
                         >
-                          Delete
+                          Approve
                         </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                      )}
+
+                      <button
+                        className="action-button secondary"
+                        onClick={() => deleteAppointment(a.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+
+                  </div>
+                ))}
+
+              </div>
+            )}
           </div>
         )}
 
         {/* USERS */}
         {section === "users" && (
           <div className="card">
+
             <h3>Registered Users</h3>
 
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Password</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+            {users.length === 0 ? (
+              <div className="empty-state">
+                <h3>No users found</h3>
+              </div>
+            ) : (
+              <div className="appointments-list">
 
-              <tbody>
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan="4">No users found</td>
-                  </tr>
-                ) : (
-                  users.map((u, i) => (
-                    <tr key={i}>
-                      <td>{u.name}</td>
-                      <td>{u.email}</td>
-                      <td><code>{u.password}</code></td>
-                      <td>
-                        <button
-                          className="delete-btn"
-                          onClick={() => deleteUser(i)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                {users.map((u) => (
+                  <div key={u.id} className="appointment-item">
+
+                    <div className="appointment-info">
+                      <strong>{u.email}</strong>
+                      <p>Role: {u.role}</p>
+                    </div>
+
+                  </div>
+                ))}
+
+              </div>
+            )}
+
           </div>
         )}
 
         {/* SETTINGS */}
         {section === "settings" && (
           <div className="card">
-            <h3>Settings</h3>
 
-            <label>Business Name</label>
-            <input defaultValue="Glow & Bloom Skin Wellness Center" />
+            <h3>System Settings</h3>
 
-            <label>Business Hours</label>
-            <input defaultValue="9:00 AM - 7:00 PM" />
+            <div className="welcome-content">
+              <p>Business configuration panel</p>
 
-            <button onClick={() => alert("Saved!")}>
-              Save Settings
-            </button>
+              <input placeholder="Business Name" />
+              <input placeholder="Business Hours" />
+
+              <button className="action-button">
+                Save Changes
+              </button>
+            </div>
+
           </div>
         )}
-      </div>
+
+      </main>
     </div>
   );
 }
