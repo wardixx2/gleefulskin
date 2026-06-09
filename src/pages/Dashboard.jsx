@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿﻿import { useEffect, useState } from "react";
+=======
+﻿import { useEffect, useState } from "react";
+>>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import "../styles/Dashboard.css";
@@ -149,4 +153,8 @@ export default function Dashboard({ session, profile }) {
       </main>
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 43916d63f59d8e5529b1455cd3b55ed3f872ca7d
