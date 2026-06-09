@@ -1,52 +1,43 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
-import { useNavigate } from "react-router-dom";
-import "../styles/Login.css"; // optional if you move styles out
+import "../styles/Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
- const handleLogin = async (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    
-if (data.user) {
-  await supabase.from("profiles").insert({
-    id: data.user.id,
-    full_name: form.fullName,
-    role: "customer",
-  });
-}
+
+    setLoading(false);
 
     if (error) {
       alert(error.message);
       return;
     }
 
-    const user = data.user;
-
     alert("Login successful!");
-
-    // simple role check (we'll improve later)
-    if (user.email === "admin@glow.com") {
-      navigate("/admin");
-    } else {
-      navigate("/book");
-    }
+    navigate("/dashboard");
   };
 
   return (
     <div className="page">
       <header className="header">
-        <h1>Glow & Bloom</h1>
+        <h1>GLEEFUL</h1>
         <p>Skin Wellness Center • Radiance Awaits You</p>
       </header>
 
@@ -57,23 +48,28 @@ if (data.user) {
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <label>Email Address</label>
-             <input
-        placeholder="email"
-        onChange={(e) => setEmail(e.target.value)}
-      />
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
             <div className="form-group">
               <label>Password</label>
               <div className="password-wrapper">
-                 <input
-        type="password"
-        placeholder="password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
                 <span
                   className="toggle-password"
-                  // onClick={togglePasswordVisibility}
+                  onClick={() => setShowPassword((current) => !current)}
                 >
                   {showPassword ? "Hide" : "Show"}
                 </span>
@@ -90,23 +86,19 @@ if (data.user) {
                 Remember me
               </label>
 
-              <span className="forgot-pass" 
-              // onClick={handleForgotPassword}
-              >
-                Forgot Password?
-              </span>
+              <span className="forgot-pass">Forgot Password?</span>
             </div>
 
-            <button>Sign In to My Account</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In to My Account"}
+            </button>
           </form>
 
           <div className="login-footer">
             Don't have an account yet?{" "}
-            <span className="link" 
-            // onClick={handleCreateAccount}
-            >
+            <Link className="link" to="/register">
               Create Account
-            </span>
+            </Link>
           </div>
         </div>
       </div>
