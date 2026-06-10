@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
+import { showError, showSuccess } from "../lib/alerts.js";
 import "../styles/Login.css";
 
 export default function Login() {
@@ -26,11 +27,11 @@ export default function Login() {
     setLoading(false);
 
     if (error) {
-      alert(error.message);
+      await showError(error.message, "Login failed");
       return;
     }
 
-    alert("Login successful!");
+    await showSuccess("Login successful!");
     navigate("/dashboard");
   };
 

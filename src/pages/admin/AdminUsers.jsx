@@ -5,7 +5,7 @@ export default function AdminUsers() {
   const [users, setUsers] = useState([]);
 
   const load = async () => {
-    const { data, error } = await supabase.from("profiles").select("id, full_name, role, created_at, email");
+    const { data, error } = await supabase.from("profiles").select("id, full_name, role, created_at");
     if (error) {
       console.error(error.message);
       setUsers([]);
@@ -36,7 +36,7 @@ export default function AdminUsers() {
           {users.map((u) => (
             <div key={u.id} className="appointment-item">
               <div className="appointment-info">
-                <strong>{u.full_name || u.email}</strong>
+                <strong>{u.full_name || u.id}</strong>
                 <p>Role: {u.role}</p>
                 <p>Joined: {new Date(u.created_at).toLocaleDateString()}</p>
               </div>

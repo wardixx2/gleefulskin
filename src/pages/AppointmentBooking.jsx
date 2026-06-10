@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/AppointmentBooking.css";
 import "../styles/Dashboard.css";
 import { supabase } from "../lib/supabase.js";
+import { showError, showWarning } from "../lib/alerts.js";
 
 export default function AppointmentBooking({ session, profile }) {
   const [selectedService, setSelectedService] = useState(null);
@@ -82,12 +83,12 @@ export default function AppointmentBooking({ session, profile }) {
     e.preventDefault();
 
     if (!selectedService) {
-      alert("Please select a skincare treatment first ✨");
+      await showWarning("Please select a skincare treatment first.");
       return;
     }
 
     if (!session?.user?.id) {
-      alert("Please log in to book an appointment.");
+      await showWarning("Please log in to book an appointment.");
       return;
     }
 
@@ -114,13 +115,13 @@ export default function AppointmentBooking({ session, profile }) {
       ]);
 
       if (error) {
-        alert("Supabase Error: " + error.message);
+        await showError(error.message, "Supabase error");
         return;
       }
 
       setModalOpen(true);
     } catch (err) {
-      alert("Unexpected Error: " + err.message);
+      await showError(err.message, "Unexpected error");
     }
   };
 

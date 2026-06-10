@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
+import { showError, showSuccess } from "../lib/alerts.js";
 import "../styles/Register.css";
 
 export default function Register() {
@@ -32,7 +33,7 @@ export default function Register() {
       });
 
       if (error) {
-        alert(error.message);
+        await showError(error.message, "Registration failed");
         return;
       }
 
@@ -49,7 +50,7 @@ export default function Register() {
         });
       }
 
-      alert("Account created! Please log in to continue.");
+      await showSuccess("Account created! Please log in to continue.");
       navigate("/login");
     } finally {
       setLoading(false);

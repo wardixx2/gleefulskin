@@ -92,7 +92,7 @@ export default function Dashboard({ session, profile }) {
         <div className="dashboard-welcome card">
           <div className="welcome-content">
             <h2>
-              Welcome back, <span className="highlight">{profile?.full_name || session?.user?.email}</span>
+              Welcome, <span className="highlight">{profile?.full_name || session?.user?.email}</span>
             </h2>
             <p>
               {profile?.role === "admin"

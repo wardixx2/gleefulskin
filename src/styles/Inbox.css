@@ -1,0 +1,86 @@
+.inbox-page {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+.inbox-main {
+  padding: 24px;
+}
+
+.inbox-header {
+  margin-bottom: 16px;
+}
+
+.inbox-list {
+  padding: 0;
+}
+
+.inbox-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.inbox-item {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.inbox-item:hover {
+  background: rgba(183, 110, 121, 0.08);
+}
+
+.inbox-item.unread {
+  background: rgba(183, 110, 121, 0.06);
+}
+
+.inbox-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.inbox-title {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inbox-unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #B76E79;
+  display: inline-block;
+}
+
+.inbox-time {
+  opacity: 0.75;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.inbox-message {
+  opacity: 0.95;
+  margin-bottom: 10px;
+}
+
+.inbox-appointment {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.inbox-appointment-row {
+  font-size: 13px;
+}
+

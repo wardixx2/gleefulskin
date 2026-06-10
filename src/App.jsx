@@ -12,6 +12,7 @@ import AdminTreatments from "./pages/admin/AdminTreatments.jsx";
 import AdminSettings from "./pages/admin/AdminSettings.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile.jsx";
+import Inbox from "./pages/Inbox.jsx";
 import { supabase } from "./lib/supabase.js";
 
 function ProtectedRoute({ children, session, profile, requireAdmin }) {
@@ -161,6 +162,14 @@ export default function App() {
           element={
             <ProtectedRoute session={session} profile={profile}>
               <Dashboard session={session} profile={profile} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute session={session} profile={profile}>
+              <Inbox session={session} profile={profile} />
             </ProtectedRoute>
           }
         />

@@ -19,6 +19,7 @@ export default function TopNav({ profile }) {
       <div className="topnav-links">
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/book">Book</Link>
+        <Link to="/inbox">Inbox</Link>
         <Link to="/profile">Profile</Link>
         {profile?.role === "admin" && <Link to="/admin">Admin Panel</Link>}
       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase.js";
+import { confirmAction, showError, showSuccess, showWarning } from "../lib/alerts.js";
 
 function formatPeso(value) {
   if (value === null || value === undefined || value === "") return "₱0";
@@ -86,25 +87,25 @@ export default function TreatmentsPanel({ onRefreshed }) {
 
   const handleSave = async () => {
     if (!form.name.trim()) {
-      alert("Treatment name is required.");
+      await showWarning("Treatment name is required.");
       return;
     }
 
     const priceNum = Number(form.price);
     if (Number.isNaN(priceNum) || priceNum < 0) {
-      alert("Treatment price must be a valid non-negative number.");
+      await showWarning("Treatment price must be a valid non-negative number.");
       return;
     }
 
     const orsAmountNum = form.ors_amount === "" ? null : Number(form.ors_amount);
     if (orsAmountNum !== null && (Number.isNaN(orsAmountNum) || orsAmountNum < 0)) {
-      alert("ORS amount must be a valid non-negative number.");
+      await showWarning("ORS amount must be a valid non-negative number.");
       return;
     }
 
     if (form.ors_required) {
       if (!String(form.ors_number || "").trim()) {
-        alert("ORS number is required when ORS required is checked.");
+        await showWarning("ORS number is required when ORS required is checked.");
         return;
       }
     }
@@ -142,8 +143,9 @@ export default function TreatmentsPanel({ onRefreshed }) {
       resetForm();
       await loadTreatments();
       onRefreshed?.();
+      await showSuccess("Treatment saved successfully.");
     } catch (e) {
-      alert("Failed to save treatment: " + e.message);
+      await showError(e.message, "Failed to save treatment");
     } finally {
       setSaving(false);
     }
@@ -156,7 +158,7 @@ export default function TreatmentsPanel({ onRefreshed }) {
       .eq("id", t.id);
 
     if (error) {
-      alert("Failed: " + error.message);
+      await showError(error.message, "Failed to update treatment");
       return;
     }
 
@@ -165,16 +167,23 @@ export default function TreatmentsPanel({ onRefreshed }) {
   };
 
   const handleDelete = async (t) => {
-    if (!confirm(`Delete treatment "${t.name}"?`)) return;
+    const result = await confirmAction({
+      title: "Delete treatment?",
+      text: `This will remove "${t.name}" from the treatments list.`,
+      confirmButtonText: "Delete",
+    });
+
+    if (!result.isConfirmed) return;
 
     const { error } = await supabase.from("treatments").delete().eq("id", t.id);
     if (error) {
-      alert("Failed to delete: " + error.message);
+      await showError(error.message, "Failed to delete treatment");
       return;
     }
 
     await loadTreatments();
     onRefreshed?.();
+    await showSuccess("Treatment deleted successfully.");
   };
 
   return (
