@@ -61,7 +61,7 @@ export default function Dashboard({ session, profile }) {
   return (
     <div className="page dashboard-page">
       <aside className="dashboard-sidebar">
-        <div className="sidebar-brand">Glow & Bloom</div>
+        <div className="sidebar-brand">GLEEFUL</div>
         <div className="sidebar-summary">
           <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
         </div>

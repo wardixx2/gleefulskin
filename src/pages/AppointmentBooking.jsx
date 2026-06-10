@@ -7,8 +7,6 @@ import { showError, showWarning } from "../lib/alerts.js";
 
 export default function AppointmentBooking({ session, profile }) {
   const [selectedService, setSelectedService] = useState(null);
-  const [selectedPrice, setSelectedPrice] = useState("");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -100,15 +98,11 @@ export default function AppointmentBooking({ session, profile }) {
           full_name: form.fullName,
           email: form.email,
           phone: form.phone,
-
           treatment: selectedService.name,
           price: formatPeso(selectedService.price),
-
-          // snapshot ORS config for record consistency (nullable columns)
           ors_required: selectedService.ors_required,
           ors_number: selectedService.ors_number,
           ors_amount: selectedService.ors_amount,
-
           appointment_date: form.date,
           appointment_time: form.time,
           status: "Pending",
@@ -138,71 +132,36 @@ export default function AppointmentBooking({ session, profile }) {
     });
   };
 
-  return (
-    <div className={`page dashboard-page ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+ return (
+    <div className="page dashboard-page">
       <aside className="dashboard-sidebar">
-        {/* Toggle Collapse Button matching Admin Style */}
-        <button
-          className="sidebar-collapse-toggle"
-          onClick={() => setSidebarCollapsed((current) => !current)}
-          type="button"
-          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          style={{
-            position: "absolute",
-            right: "-12px",
-            top: "24px",
-            zIndex: 10,
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            border: "1px solid #e5e7eb",
-            backgroundColor: "#ffffff",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "12px",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-          }}
-        >
-          {sidebarCollapsed ? ">" : "<"}
-        </button>
-
-        <div className="sidebar-brand">
-          <h2>{sidebarCollapsed ? "G" : "GLEEFUL"}</h2>
-        </div>
+        <div className="sidebar-brand">GLEEFUL</div>
         <div className="sidebar-summary">
-          <p className="sidebar-role">
-            {sidebarCollapsed 
-              ? (profile?.role === "admin" ? "ADM" : "CUST") 
-              : (profile?.role === "admin" ? "Administrator" : "Customer")
-            }
-          </p>
+          <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
         </div>
+        
+       
+
         <nav className="sidebar-nav">
           <Link to="/dashboard" className="sidebar-link" title="Dashboard">
-            <span className="menu-short-label" style={{ display: sidebarCollapsed ? "inline" : "none" }}>DB</span>
-            <span className="menu-full-label" style={{ display: sidebarCollapsed ? "none" : "inline" }}>Dashboard</span>
+            <span className="menu-full-label">Dashboard</span>
           </Link>
           <Link to="/book" className="sidebar-link active" title="Book Appointment">
-            <span className="menu-short-label" style={{ display: sidebarCollapsed ? "inline" : "none" }}>BK</span>
-            <span className="menu-full-label" style={{ display: sidebarCollapsed ? "none" : "inline" }}>Book Appointment</span>
+            <span className="menu-full-label">Book Appointment</span>
           </Link>
           <Link to="/profile" className="sidebar-link" title="My Profile">
-            <span className="menu-short-label" style={{ display: sidebarCollapsed ? "inline" : "none" }}>PR</span>
-            <span className="menu-full-label" style={{ display: sidebarCollapsed ? "none" : "inline" }}>My Profile</span>
+            <span className="menu-full-label">My Profile</span>
           </Link>
           {profile?.role === "admin" && (
             <Link to="/admin" className="sidebar-link" title="Admin Panel">
-              <span className="menu-short-label" style={{ display: sidebarCollapsed ? "inline" : "none" }}>AD</span>
-              <span className="menu-full-label" style={{ display: sidebarCollapsed ? "none" : "inline" }}>Admin Panel</span>
+              <span className="menu-full-label">Admin Panel</span>
             </Link>
           )}
         </nav>
+
         <div className="sidebar-footer">
           <button className="sidebar-logout" onClick={handleLogout} title="Logout">
-            {sidebarCollapsed ? "LO" : "Logout"}
+            Logout
           </button>
         </div>
       </aside>
@@ -234,9 +193,7 @@ export default function AppointmentBooking({ session, profile }) {
                       <h4>{s.name}</h4>
                       <p>
                         {s.ors_required ? (
-                          <>
-                            ORS Required • ORS No: {s.ors_number || "-"}
-                          </>
+                          <>ORS Required • ORS No: {s.ors_number || "-"}</>
                         ) : (
                           "ORS not required"
                         )}

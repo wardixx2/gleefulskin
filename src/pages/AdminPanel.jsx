@@ -6,8 +6,9 @@ import "../styles/AdminPanel.css";
 
 export default function AdminPanel({ session, profile }) {
   const [pendingItems, setPendingItems] = useState([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -20,7 +21,6 @@ export default function AdminPanel({ session, profile }) {
     }
   }, [profile, navigate]);
 
-  // Isolated data fetching logic so it can be called cleanly during rollbacks
   const loadPendingData = useCallback(async () => {
     const { data, error } = await supabase
       .from("appointments")
@@ -33,7 +33,6 @@ export default function AdminPanel({ session, profile }) {
     }
   }, []);
 
-  // Load pending records and subscribe to live status updates
   useEffect(() => {
     loadPendingData();
 
@@ -117,8 +116,6 @@ export default function AdminPanel({ session, profile }) {
 
   const handleApproveFromInbox = async (id, e) => {
     e.stopPropagation();
-
-    // Optimistic UI update: slide it out of the array immediately
     setPendingItems((prevItems) => prevItems.filter((item) => item.id !== id));
 
     const { error } = await supabase
@@ -128,7 +125,7 @@ export default function AdminPanel({ session, profile }) {
 
     if (error) {
       Swal.fire("Error", "Could not update appointment.", "error");
-      loadPendingData(); // Revert back to database state if update failed
+      loadPendingData();
     } else {
       Swal.fire({
         title: "Approved!",
@@ -147,19 +144,11 @@ export default function AdminPanel({ session, profile }) {
 
   return (
     <div
-      className={`admin-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}
+      className={`admin-layout ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
       style={{ position: "relative" }}
     >
+      {/* Sidebar Layout */}
       <aside className="admin-sidebar">
-        <button
-          className="sidebar-collapse-toggle"
-          onClick={() => setSidebarCollapsed((current) => !current)}
-          type="button"
-          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {sidebarCollapsed ? ">" : "<"}
-        </button>
 
         <div className="sidebar-brand">
           <h2>GLEEFUL</h2>
@@ -174,20 +163,30 @@ export default function AdminPanel({ session, profile }) {
               onClick={() => navigate(it.path)}
               title={it.label}
             >
-              <span className="menu-short-label">{it.shortLabel}</span>
               <span className="menu-full-label">{it.label}</span>
             </button>
           ))}
         </div>
 
         <div className="sidebar-footer">
+          <button
+            type="button"
+            className="sidebar-collapse-toggle"
+            onClick={() => setIsSidebarCollapsed((v) => !v)}
+            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isSidebarCollapsed ? "→" : "←"}
+          </button>
+
           <button className="logout-btn" onClick={handleLogout} title="Logout">
-            <span className="logout-short-label">LO</span>
             <span className="logout-full-label">Logout</span>
           </button>
         </div>
+
       </aside>
 
+      {/* Main Panel Content */}
       <main className="admin-main">
         <div
           className="admin-header admin-header-row"
@@ -201,7 +200,13 @@ export default function AdminPanel({ session, profile }) {
             borderBottom: "1px solid #f0f0f0",
           }}
         >
-          <div style={{ width: "48px" }} aria-hidden="true"></div>
+          {/* Menu Button / Spacer column */}
+          <div
+            className="mobile-menu-toggle-placeholder"
+            style={{ width: isSidebarCollapsed ? "58px" : "48px" }}
+            aria-hidden="true"
+          ></div>
+
 
           <div
             style={{
@@ -282,9 +287,10 @@ export default function AdminPanel({ session, profile }) {
           </div>
         </div>
 
-        {/* --- PREMIUM SASS PRO INBOX PANEL --- */}
+        {/* Inbox Panel Dropdown */}
         {isInboxOpen && (
           <div
+            className="admin-inbox-dropdown"
             style={{
               position: "absolute",
               top: "75px",
@@ -292,8 +298,7 @@ export default function AdminPanel({ session, profile }) {
               width: "380px",
               maxHeight: "520px",
               backgroundColor: "#ffffff",
-              boxShadow:
-                "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
               borderRadius: "16px",
               zIndex: 1000,
               overflow: "hidden",
