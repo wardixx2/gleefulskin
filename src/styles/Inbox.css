@@ -57,7 +57,7 @@
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: #B76E79;
+  background: #b76e79;
   display: inline-block;
 }
 
@@ -83,4 +83,3 @@
 .inbox-appointment-row {
   font-size: 13px;
 }
-

@@ -20,7 +20,7 @@ export default function Inbox({ session, profile }) {
     const { data, error } = await supabase
       .from("inbox_notifications")
       .select(
-        "id, title, message, read_at, created_at, appointment_id, appointment:appointment_id (id, full_name, treatment, appointment_date, appointment_time, status)"
+        "id, title, message, read_at, created_at, appointment_id, appointment:appointment_id (id, full_name, treatment, appointment_date, appointment_time, status)",
       )
       .order("created_at", { ascending: false });
 
@@ -41,7 +41,7 @@ export default function Inbox({ session, profile }) {
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read_at).length,
-    [notifications]
+    [notifications],
   );
 
   const markAsRead = async (id) => {
@@ -57,7 +57,9 @@ export default function Inbox({ session, profile }) {
 
     // optimistic update
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n))
+      prev.map((n) =>
+        n.id === id ? { ...n, read_at: new Date().toISOString() } : n,
+      ),
     );
   };
 
@@ -74,7 +76,9 @@ export default function Inbox({ session, profile }) {
       <aside className="dashboard-sidebar">
         <div className="sidebar-brand">Glow & Bloom</div>
         <div className="sidebar-summary">
-          <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
+          <p className="sidebar-role">
+            {profile?.role === "admin" ? "Administrator" : "Customer"}
+          </p>
           <p className="sidebar-subtle">Inbox: {unreadCount} unread</p>
         </div>
         <nav className="sidebar-nav">
@@ -106,7 +110,9 @@ export default function Inbox({ session, profile }) {
             <div className="empty-state">
               <h3>No notifications yet</h3>
               <p>When you book an appointment, it will show up here ✨</p>
-              <Link to="/book" className="action-button">Book Now</Link>
+              <Link to="/book" className="action-button">
+                Book Now
+              </Link>
             </div>
           ) : (
             <div className="inbox-items">
@@ -132,10 +138,18 @@ export default function Inbox({ session, profile }) {
 
                     {appt && (
                       <div className="inbox-appointment">
-                        <div className="inbox-appointment-row"><strong>Treatment:</strong> {appt.treatment}</div>
-                        <div className="inbox-appointment-row"><strong>Date:</strong> {appt.appointment_date}</div>
-                        <div className="inbox-appointment-row"><strong>Time:</strong> {appt.appointment_time}</div>
-                        <div className="inbox-appointment-row"><strong>Status:</strong> {appt.status}</div>
+                        <div className="inbox-appointment-row">
+                          <strong>Treatment:</strong> {appt.treatment}
+                        </div>
+                        <div className="inbox-appointment-row">
+                          <strong>Date:</strong> {appt.appointment_date}
+                        </div>
+                        <div className="inbox-appointment-row">
+                          <strong>Time:</strong> {appt.appointment_time}
+                        </div>
+                        <div className="inbox-appointment-row">
+                          <strong>Status:</strong> {appt.status}
+                        </div>
                       </div>
                     )}
                   </button>
@@ -148,4 +162,3 @@ export default function Inbox({ session, profile }) {
     </div>
   );
 }
-
