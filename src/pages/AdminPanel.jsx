@@ -36,20 +36,14 @@ export default function AdminPanel({ session, profile }) {
 
     loadPendingData();
 
-    // LISTEN FOR NEW BOOKINGS AND STATUS CHANGES LIVE
     const appointmentsSubscription = supabase
       .channel("admin-appointments-channel")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "appointments" },
         (payload) => {
-          console.log("Realtime change detected:", payload);
-          
-          // Force a clean fetch of the latest pending list from the database
-          // This handles insertions, updates, and deletes cleanly
           loadPendingData();
 
-          // Optional: Trigger a modern Toast notification alert if a brand new booking arrives
           if (payload.eventType === "INSERT" && payload.new.status === "Pending") {
             const Toast = Swal.mixin({
               toast: true,
@@ -120,7 +114,7 @@ export default function AdminPanel({ session, profile }) {
   };
 
   const handleApproveFromInbox = async (id, e) => {
-    e.stopPropagation(); 
+    e.stopPropagation(); // Prevents triggers from firing regular select actions
     
     const { error } = await supabase
       .from("appointments")
@@ -140,6 +134,13 @@ export default function AdminPanel({ session, profile }) {
     }
   };
 
+  // NEW: Handles picking an appointment, closing the inbox, and forwarding its ID to the view page
+  const handleSelectAppointment = (id) => {
+    setIsInboxOpen(false);
+    // Navigate to appointments route with a clean query string parameter (?selectedId=...)
+    navigate(`appointments?selectedId=${id}`);
+  };
+
   return (
     <div className={`admin-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`} style={{ position: "relative" }}>
       <aside className="admin-sidebar">
@@ -154,7 +155,7 @@ export default function AdminPanel({ session, profile }) {
         </button>
 
         <div className="sidebar-brand">
-          <h2>GLEFUL</h2>
+          <h2>GLEEFUL</h2>
           <p>Admin</p>
         </div>
 
@@ -198,10 +199,8 @@ export default function AdminPanel({ session, profile }) {
             borderBottom: "1px solid #f0f0f0"
           }}
         >
-          {/* Balanced Invisible Box Layout */}
           <div style={{ width: "48px" }} aria-hidden="true"></div>
 
-          {/* Centered Welcome Box */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", flex: 1 }}>
             <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "600", color: "#111827" }}>Admin Panel</h1>
             <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#6b7280" }}>
@@ -209,7 +208,6 @@ export default function AdminPanel({ session, profile }) {
             </p>
           </div>
 
-          {/* Right-Aligned Notification Bell Container */}
           <div 
             className="notification-bell-container" 
             onClick={() => setIsInboxOpen(!isInboxOpen)}
@@ -286,7 +284,6 @@ export default function AdminPanel({ session, profile }) {
               flexDirection: "column"
             }}
           >
-            {/* Pro Header Row */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "16px 20px", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ textAlign: "left" }}>
                 <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "#111827", textAlign: "left" }}>
@@ -316,7 +313,6 @@ export default function AdminPanel({ session, profile }) {
               </button>
             </div>
 
-            {/* Scrollable Items Block */}
             <div style={{ overflowY: "auto", padding: "8px", maxHeight: "400px", backgroundColor: "#f9fafb" }}>
               {pendingItems.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
@@ -329,10 +325,7 @@ export default function AdminPanel({ session, profile }) {
                   {pendingItems.map((item) => (
                     <div 
                       key={item.id}
-                      onClick={() => {
-                        setIsInboxOpen(false);
-                        navigate("appointments");
-                      }}
+                      onClick={() => handleSelectAppointment(item.id)} // Selecting item sends parameter to layout child
                       style={{
                         borderRadius: "12px",
                         padding: "16px",
@@ -353,7 +346,6 @@ export default function AdminPanel({ session, profile }) {
                         e.currentTarget.style.boxShadow = "0 1px 2px 0 rgba(0, 0, 0, 0.05)";
                       }}
                     >
-                      {/* Top Row: Badge + Meta Time */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
                         <span style={{
                           backgroundColor: "#fef3c7",
@@ -371,7 +363,6 @@ export default function AdminPanel({ session, profile }) {
                         </span>
                       </div>
 
-                      {/* Middle Data */}
                       <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "600", color: "#111827", textAlign: "left" }}>
                         {item.client_name || "Guest User"}
                       </h4>
@@ -379,10 +370,9 @@ export default function AdminPanel({ session, profile }) {
                         Requested <strong style={{ color: "#1f2937", fontWeight: "500" }}>{item.treatment_name}</strong> on {item.appointment_date}.
                       </p>
                       
-                      {/* Interactive Buttons Layout */}
                       <div style={{ display: "flex", gap: "8px" }}>
                         <button
-                          onClick={(e) => handleApproveFromInbox(item.id, e)}
+                          onClick={(e) => handleApproveFromInbox(item.id, e)} // Approving removes card instantly
                           style={{
                             flex: 1,
                             backgroundColor: "#10b981",
@@ -401,11 +391,7 @@ export default function AdminPanel({ session, profile }) {
                           Approve
                         </button>
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsInboxOpen(false);
-                            navigate("appointments");
-                          }}
+                          onClick={() => handleSelectAppointment(item.id)}
                           style={{
                             backgroundColor: "#f3f4f6",
                             color: "#374151",
@@ -429,7 +415,6 @@ export default function AdminPanel({ session, profile }) {
               )}
             </div>
             
-            {/* Inbox Footer View Link */}
             <div 
               onClick={() => {
                 setIsInboxOpen(false);
