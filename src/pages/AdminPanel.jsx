@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import Swal from "sweetalert2";
@@ -8,9 +8,6 @@ export default function AdminPanel({ session, profile }) {
   const [pendingItems, setPendingItems] = useState([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
-
-  // Inbox notification count (for customers)
-  const [inboxNotificationsCount, setInboxNotificationsCount] = useState(0);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,22 +20,21 @@ export default function AdminPanel({ session, profile }) {
     }
   }, [profile, navigate]);
 
+  // Isolated data fetching logic so it can be called cleanly during rollbacks
+  const loadPendingData = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("appointments")
+      .select("id, full_name, treatment, appointment_date, appointment_time, status")
+      .eq("status", "Pending")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setPendingItems(data);
+    }
+  }, []);
+
   // Load pending records and subscribe to live status updates
   useEffect(() => {
-    const loadPendingData = async () => {
-      const { data, error } = await supabase
-        .from("appointments")
-        .select(
-          "id, client_name, treatment_name, appointment_date, appointment_time, status",
-        )
-        .eq("status", "Pending")
-        .order("created_at", { ascending: false });
-
-      if (!error && data) {
-        setPendingItems(data);
-      }
-    };
-
     loadPendingData();
 
     const appointmentsSubscription = supabase
@@ -49,10 +45,7 @@ export default function AdminPanel({ session, profile }) {
         (payload) => {
           loadPendingData();
 
-          if (
-            payload.eventType === "INSERT" &&
-            payload.new.status === "Pending"
-          ) {
+          if (payload.eventType === "INSERT" && payload.new.status === "Pending") {
             const Toast = Swal.mixin({
               toast: true,
               position: "top-end",
@@ -66,44 +59,28 @@ export default function AdminPanel({ session, profile }) {
             });
             Toast.fire({
               icon: "info",
-              title: `New booking request from ${payload.new.client_name || "a client"}!`,
+              title: `New booking request from ${payload.new.full_name || "a client"}!`,
             });
           }
-        },
+        }
       )
       .subscribe();
 
     return () => {
       supabase.removeChannel(appointmentsSubscription);
     };
-  }, []);
+  }, [loadPendingData]);
 
   const items = [
-    {
-      key: "dashboard",
-      label: "Dashboard",
-      shortLabel: "DB",
-      path: "dashboard",
-    },
-    {
-      key: "appointments",
-      label: "Appointments",
-      shortLabel: "AP",
-      path: "appointments",
-    },
+    { key: "dashboard", label: "Dashboard", shortLabel: "DB", path: "dashboard" },
+    { key: "appointments", label: "Appointments", shortLabel: "AP", path: "appointments" },
     { key: "users", label: "Users", shortLabel: "US", path: "users" },
-    {
-      key: "treatments",
-      label: "Treatments",
-      shortLabel: "TR",
-      path: "treatments",
-    },
+    { key: "treatments", label: "Treatments", shortLabel: "TR", path: "treatments" },
     { key: "settings", label: "Settings", shortLabel: "ST", path: "settings" },
   ];
 
   const active = (p) =>
-    location.pathname.endsWith(p) ||
-    (p === "dashboard" && location.pathname === "/admin");
+    location.pathname.endsWith(p) || (p === "dashboard" && location.pathname === "/admin");
 
   const handleLogout = async () => {
     const result = await Swal.fire({
@@ -139,7 +116,10 @@ export default function AdminPanel({ session, profile }) {
   };
 
   const handleApproveFromInbox = async (id, e) => {
-    e.stopPropagation(); // Prevents triggers from firing regular select actions
+    e.stopPropagation();
+
+    // Optimistic UI update: slide it out of the array immediately
+    setPendingItems((prevItems) => prevItems.filter((item) => item.id !== id));
 
     const { error } = await supabase
       .from("appointments")
@@ -148,6 +128,7 @@ export default function AdminPanel({ session, profile }) {
 
     if (error) {
       Swal.fire("Error", "Could not update appointment.", "error");
+      loadPendingData(); // Revert back to database state if update failed
     } else {
       Swal.fire({
         title: "Approved!",
@@ -159,10 +140,8 @@ export default function AdminPanel({ session, profile }) {
     }
   };
 
-  // NEW: Handles picking an appointment, closing the inbox, and forwarding its ID to the view page
   const handleSelectAppointment = (id) => {
     setIsInboxOpen(false);
-    // Navigate to appointments route with a clean query string parameter (?selectedId=...)
     navigate(`appointments?selectedId=${id}`);
   };
 
@@ -210,7 +189,6 @@ export default function AdminPanel({ session, profile }) {
       </aside>
 
       <main className="admin-main">
-        {/* Balanced Header Container */}
         <div
           className="admin-header admin-header-row"
           style={{
@@ -234,28 +212,12 @@ export default function AdminPanel({ session, profile }) {
               flex: 1,
             }}
           >
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "24px",
-                fontWeight: "600",
-                color: "#111827",
-              }}
-            >
+            <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "600", color: "#111827" }}>
               Admin Panel
             </h1>
-            <p
-              style={{
-                margin: "4px 0 0 0",
-                fontSize: "14px",
-                color: "#6b7280",
-              }}
-            >
+            <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#6b7280" }}>
               Welcome back,{" "}
-              <span
-                className="highlight"
-                style={{ fontWeight: "600", color: "#111827" }}
-              >
+              <span className="highlight" style={{ fontWeight: "600", color: "#111827" }}>
                 {profile?.full_name || "Admin"}
               </span>
             </p>
@@ -277,7 +239,7 @@ export default function AdminPanel({ session, profile }) {
               justifyContent: "center",
               transition: "background-color 0.2s",
             }}
-            title={`${inboxNotificationsCount} New Inbox Notifications`}
+            title={`${pendingBookingsCount} New Inbox Notifications`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -350,25 +312,10 @@ export default function AdminPanel({ session, profile }) {
               }}
             >
               <div style={{ textAlign: "left" }}>
-                <h3
-                  style={{
-                    margin: 0,
-                    fontSize: "16px",
-                    fontWeight: "600",
-                    color: "#111827",
-                    textAlign: "left",
-                  }}
-                >
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "#111827" }}>
                   Notifications
                 </h3>
-                <p
-                  style={{
-                    margin: "2px 0 0 0",
-                    fontSize: "12px",
-                    color: "#6b7280",
-                    textAlign: "left",
-                  }}
-                >
+                <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280" }}>
                   You have {pendingBookingsCount} new booking requests
                 </p>
               </div>
@@ -392,27 +339,11 @@ export default function AdminPanel({ session, profile }) {
               </button>
             </div>
 
-            <div
-              style={{
-                overflowY: "auto",
-                padding: "8px",
-                maxHeight: "400px",
-                backgroundColor: "#f9fafb",
-              }}
-            >
+            <div style={{ overflowY: "auto", padding: "8px", maxHeight: "400px", backgroundColor: "#f9fafb" }}>
               {pendingItems.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>
-                    🎉
-                  </div>
-                  <h4
-                    style={{
-                      margin: "0 0 4px 0",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      color: "#374151",
-                    }}
-                  >
+                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>🎉</div>
+                  <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "500", color: "#374151" }}>
                     All caught up!
                   </h4>
                   <p style={{ margin: 0, fontSize: "12px", color: "#9ca3af" }}>
@@ -420,17 +351,11 @@ export default function AdminPanel({ session, profile }) {
                   </p>
                 </div>
               ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {pendingItems.map((item) => (
                     <div
                       key={item.id}
-                      onClick={() => handleSelectAppointment(item.id)} // Selecting item sends parameter to layout child
+                      onClick={() => handleSelectAppointment(item.id)}
                       style={{
                         borderRadius: "12px",
                         padding: "16px",
@@ -443,14 +368,12 @@ export default function AdminPanel({ session, profile }) {
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = "#cbd5e1";
                         e.currentTarget.style.transform = "translateY(-1px)";
-                        e.currentTarget.style.boxShadow =
-                          "0 4px 6px -1px rgba(0, 0, 0, 0.05)";
+                        e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.05)";
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.borderColor = "#e5e7eb";
                         e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow =
-                          "0 1px 2px 0 rgba(0, 0, 0, 0.05)";
+                        e.currentTarget.style.boxShadow = "0 1px 2px 0 rgba(0, 0, 0, 0.05)";
                       }}
                     >
                       <div
@@ -474,47 +397,21 @@ export default function AdminPanel({ session, profile }) {
                         >
                           PENDING
                         </span>
-                        <span
-                          style={{
-                            fontSize: "11px",
-                            color: "#9ca3af",
-                            fontWeight: "500",
-                          }}
-                        >
+                        <span style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "500" }}>
                           {item.appointment_time}
                         </span>
                       </div>
 
-                      <h4
-                        style={{
-                          margin: "0 0 4px 0",
-                          fontSize: "14px",
-                          fontWeight: "600",
-                          color: "#111827",
-                          textAlign: "left",
-                        }}
-                      >
-                        {item.client_name || "Guest User"}
+                      <h4 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "600", color: "#111827", textAlign: "left" }}>
+                        {item.full_name || "Guest User"}
                       </h4>
-                      <p
-                        style={{
-                          margin: "0 0 12px 0",
-                          fontSize: "13px",
-                          color: "#4b5563",
-                          lineHeight: "1.4",
-                          textAlign: "left",
-                        }}
-                      >
-                        Requested{" "}
-                        <strong style={{ color: "#1f2937", fontWeight: "500" }}>
-                          {item.treatment_name}
-                        </strong>{" "}
-                        on {item.appointment_date}.
+                      <p style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#4b5563", lineHeight: "1.4", textAlign: "left" }}>
+                        Requested <strong style={{ color: "#1f2937", fontWeight: "500" }}>{item.treatment}</strong> on {item.appointment_date}.
                       </p>
 
                       <div style={{ display: "flex", gap: "8px" }}>
                         <button
-                          onClick={(e) => handleApproveFromInbox(item.id, e)} // Approving removes card instantly
+                          onClick={(e) => handleApproveFromInbox(item.id, e)}
                           style={{
                             flex: 1,
                             backgroundColor: "#10b981",
@@ -527,12 +424,8 @@ export default function AdminPanel({ session, profile }) {
                             cursor: "pointer",
                             transition: "background-color 0.15s",
                           }}
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#059669")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#10b981")
-                          }
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#059669")}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#10b981")}
                         >
                           Approve
                         </button>
@@ -549,12 +442,8 @@ export default function AdminPanel({ session, profile }) {
                             cursor: "pointer",
                             transition: "background-color 0.15s",
                           }}
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#e5e7eb")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.backgroundColor = "#f3f4f6")
-                          }
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e5e7eb")}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
                         >
                           Review Details
                         </button>
@@ -581,12 +470,8 @@ export default function AdminPanel({ session, profile }) {
                 cursor: "pointer",
                 transition: "background-color 0.15s",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#f8fafc")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "#ffffff")
-              }
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8fafc")}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#ffffff")}
             >
               See all appointments
             </div>
