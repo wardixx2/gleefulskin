@@ -1,4 +1,6 @@
-/* RESET */
+/* ==========================================================================
+   1. RESET & BASE VARIABLES
+   ========================================================================== */
 * {
   margin: 0;
   padding: 0;
@@ -14,7 +16,9 @@ body,
   background: #fff7f7;
 }
 
-/* PAGE LAYOUT */
+/* ==========================================================================
+   2. DESKTOP SCREEN LAYOUT RULES (GRID SYSTEM W/ TOGGLE)
+   ========================================================================== */
 .admin-layout {
   width: 100vw;
   min-height: 100vh;
@@ -29,29 +33,31 @@ body,
   transition: grid-template-columns 0.25s ease;
 }
 
+/* Desktop Collapsed Grid State */
 .admin-layout.sidebar-collapsed {
   grid-template-columns: 92px 1fr;
 }
 
-/* SIDEBAR */
+/* ==========================================================================
+   3. SIDEBAR STRUCTURE & DESIGN (DESKTOP DEFAULT)
+   ========================================================================== */
 .admin-sidebar {
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
-
   background: linear-gradient(180deg, #8b4a55 0%, #9d5a67 100%);
   padding: 24px 18px;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
   border-right: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
-  transition: padding 0.25s ease;
+  transition: padding 0.25s ease, width 0.25s ease;
+  z-index: 100;
 }
 
+/* Desktop Header Collapse Toggle Button */
 .sidebar-collapse-toggle {
   align-self: flex-end;
   width: 38px;
@@ -70,13 +76,12 @@ body,
   transform: translateY(-1px);
 }
 
-/* SIDEBAR BRAND */
+/* Brand Container */
 .sidebar-brand {
   background: #fff;
   border-radius: 24px;
   padding: 10px;
   text-align: center;
-
   border: 1px solid rgba(183, 110, 121, 0.14);
   transition: padding 0.25s ease, border-radius 0.25s ease;
 }
@@ -91,7 +96,9 @@ body,
   margin-top: 6px;
 }
 
-/* SIDEBAR MENU */
+/* ==========================================================================
+   4. NAVIGATION MENU BUTTONS & LINKS
+   ========================================================================== */
 .sidebar-menu {
   display: flex;
   flex-direction: column;
@@ -103,26 +110,17 @@ body,
 .sidebar-menu button {
   width: 100%;
   padding: 14px 18px;
-
   border: 1px solid rgba(183, 110, 121, 0.14);
   border-radius: 16px;
-
   background: #fff7f7;
   color: #8b3a48;
-
   text-align: left;
   font-weight: 600;
   cursor: pointer;
-
   transition: 0.25s ease;
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.menu-short-label,
-.logout-short-label {
-  display: none;
 }
 
 .sidebar-menu button:hover {
@@ -136,7 +134,9 @@ body,
   font-weight: 700;
 }
 
-/* SIDEBAR FOOTER */
+/* ==========================================================================
+   5. SIDEBAR FOOTER & LOGOUT
+   ========================================================================== */
 .sidebar-footer {
   margin-top: 20px;
 }
@@ -144,16 +144,12 @@ body,
 .logout-btn {
   width: 100%;
   padding: 14px;
-
   border: none;
   border-radius: 16px;
-
   background: #8b4a55;
   color: white;
-
   font-weight: 700;
   cursor: pointer;
-
   transition: 0.2s ease;
   display: flex;
   align-items: center;
@@ -166,6 +162,17 @@ body,
   transform: translateY(-2px);
 }
 
+/* Base states: Hide structural elements reserved for mobile logic on desktop panels */
+.sidebar-toggle-wrapper,
+.menu-short-label,
+.logout-short-label,
+.mobile-header-spacer {
+  display: none !important;
+}
+
+/* ==========================================================================
+   6. DESKTOP SIDEBAR COLLAPSED TRANSITIONS
+   ========================================================================== */
 .sidebar-collapsed .admin-sidebar {
   padding: 18px 12px;
   align-items: center;
@@ -182,7 +189,7 @@ body,
   border-radius: 18px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justifyContent: center;
 }
 
 .sidebar-collapsed .sidebar-brand h2 {
@@ -209,13 +216,13 @@ body,
   height: 52px;
   padding: 0;
   align-items: center;
-  justify-content: center;
+  justifyContent: center;
   text-align: center;
 }
 
 .sidebar-collapsed .menu-short-label,
 .sidebar-collapsed .logout-short-label {
-  display: inline-flex;
+  display: inline-flex !important;
   font-size: 0.76rem;
   letter-spacing: 0;
 }
@@ -223,7 +230,7 @@ body,
 .sidebar-collapsed .sidebar-footer {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justifyContent: center;
 }
 
 .sidebar-collapsed .logout-btn {
@@ -232,7 +239,9 @@ body,
   padding: 0;
 }
 
-/* MAIN AREA */
+/* ==========================================================================
+   7. MAIN CONTENT AREA COMPONENT PANELS
+   ========================================================================== */
 .admin-main {
   padding: 24px;
   display: flex;
@@ -240,19 +249,18 @@ body,
   gap: 20px;
 }
 
-/* HEADER */
+/* HEADER COMPONENT */
 .admin-header {
   background: white;
   border-radius: 24px;
   padding: 24px;
-
   box-shadow: 0 10px 30px rgba(183, 110, 121, 0.08);
 }
 
 .admin-header-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justifyContent: space-between;
   gap: 20px;
 }
 
@@ -265,10 +273,11 @@ body,
   color: #7d4f55;
 }
 
+/* INBOX / NOTIFICATION BADGE */
 .notification-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  justifyContent: space-between;
   gap: 12px;
   min-width: 180px;
   padding: 16px 20px;
@@ -296,13 +305,13 @@ body,
   min-width: 32px;
   height: 32px;
   align-items: center;
-  justify-content: center;
+  justifyContent: center;
   border-radius: 999px;
   background: #b76e79;
   color: white;
 }
 
-/* STATS */
+/* METRICS / STAT CARDS */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -313,7 +322,6 @@ body,
   background: white;
   border-radius: 20px;
   padding: 24px;
-
   box-shadow: 0 10px 25px rgba(183, 110, 121, 0.08);
   transition: 0.3s;
 }
@@ -333,16 +341,14 @@ body,
   color: #b76e79;
 }
 
-/* CARD */
 .card {
   background: white;
   border-radius: 24px;
   padding: 24px;
-
   box-shadow: 0 10px 25px rgba(183, 110, 121, 0.08);
 }
 
-/* TABLE */
+/* DATA TABLES */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -361,43 +367,166 @@ table th {
   color: #8b3a48;
 }
 
-/* BUTTONS */
-button {
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-weight: 600;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-/* APPROVE */
+/* BUTTON ACTION STATES */
 .approve-btn {
   background: #e8f9f0;
   color: #2c8058;
   margin-right: 6px;
 }
 
-/* DELETE */
 .delete-btn {
   background: #fbe8e8;
   color: #b14949;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
+/* ==========================================================================
+   8. MOBILE RESPONSIVE VIEWS & OVERRIDES (BREAKPOINT AT 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
   .admin-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .admin-sidebar {
-    display: none;
+    display: block;
+    position: relative;
   }
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Structural spacer that keeps the main content alignment intact */
+  .mobile-header-spacer {
+    display: block !important;
+    width: 60px;
+  }
+
+  /* Fixed sidebar wrapper initialization overlay */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease;
+  }
+
+  /* Hide default desktop button tracker */
+  .sidebar-collapse-toggle {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE A: COLLAPSED (Pristine Mini-bar, ONLY Toggle Button Shows)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-collapsed {
+    width: 60px;
+    padding: 12px 0;
+    align-items: center;
+  }
+
+  /* Explicitly hide every item to clear up visual real estate */
+  .admin-sidebar.mobile-collapsed .sidebar-brand,
+  .admin-sidebar.mobile-collapsed .sidebar-menu,
+  .admin-sidebar.mobile-collapsed .sidebar-footer,
+  .admin-sidebar.mobile-collapsed .menu-short-label,
+  .admin-sidebar.mobile-collapsed .logout-short-label {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE B: EXPANDED (Full Drawer Tray View Overlay)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-expanded {
+    width: 280px;
+    padding: 24px 18px;
+    align-items: stretch;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand {
+    width: 100%;
+    min-height: auto;
+    padding: 10px;
+    border-radius: 24px;
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand h2 {
+    font-size: 1.3rem;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand p,
+  .admin-sidebar.mobile-expanded .menu-full-label,
+  .admin-sidebar.mobile-expanded .logout-full-label {
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-menu {
+    display: flex !important;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-menu button {
+    width: 100%;
+    padding: 14px 18px;
+    justify-content: flex-start;
+  }
+
+  .admin-sidebar.mobile-expanded .menu-short-label,
+  .admin-sidebar.mobile-expanded .logout-short-label {
+    display: none !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-footer {
+    display: block !important;
+    width: 100%;
+  }
+
+  .admin-sidebar.mobile-expanded .logout-btn {
+    width: 100%;
+    padding: 14px;
+    height: auto;
+    justify-content: center;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE TOGGLE LAYOUT ENGINE (PERSISTENT BUTTON ELEMENT)
+     ------------------------------------------------------------------------ */
+  .sidebar-toggle-wrapper {
+    display: flex !important;
+    justifyContent: center;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-toggle-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justifyContent: center;
+    transition: background 0.2s;
+  }
+  
+  .sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  /* Standardizes content layout margins to flow smoothly beside the 60px track */
+  .admin-main {
+    margin-left: 60px;
+    width: calc(100% - 60px);
+    padding: 16px;
+  }
+
+  /* Response adaptations for notification pop-outs on touch displays */
+  .admin-inbox-dropdown {
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    top: 85px !important;
   }
 }

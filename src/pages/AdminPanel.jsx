@@ -7,13 +7,17 @@ import "../styles/AdminPanel.css";
 export default function AdminPanel({ session, profile }) {
   const [pendingItems, setPendingItems] = useState([]);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
+  const [isMobileOpen, setIsMobileOpen] = useState(false); // Tracks state for mobile drawer pull
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const pendingBookingsCount = pendingItems.length;
+
+  // Closes slide-out drawer options upon switching view states
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (profile && profile.role !== "admin") {
@@ -143,18 +147,51 @@ export default function AdminPanel({ session, profile }) {
   };
 
   return (
-    <div
-      className={`admin-layout ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}
-      style={{ position: "relative" }}
-    >
-      {/* Sidebar Layout */}
-      <aside className="admin-sidebar">
+    <div className="admin-layout">
+      {/* SIDEBAR CONTAINER: Dynamic mobile control configuration class toggles applied here */}
+      <aside className={`admin-sidebar ${isMobileOpen ? "mobile-expanded" : "mobile-collapsed"}`}>
+        
+        {/* Inside Hamburger Toggle Wrapper Block */}
+        <div className="sidebar-toggle-wrapper">
+          <button
+            className="sidebar-toggle-btn"
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            aria-label="Toggle structural layout view"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {isMobileOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="12" x2="21" y2="12"></line>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
 
+        {/* Global Nav Branding Container Group */}
         <div className="sidebar-brand">
           <h2>GLEEFUL</h2>
           <p>Admin</p>
         </div>
 
+        {/* Nav Selection Buttons Grid */}
         <div className="sidebar-menu">
           {items.map((it) => (
             <button
@@ -163,30 +200,22 @@ export default function AdminPanel({ session, profile }) {
               onClick={() => navigate(it.path)}
               title={it.label}
             >
+              <span className="menu-short-label">{it.shortLabel}</span>
               <span className="menu-full-label">{it.label}</span>
             </button>
           ))}
         </div>
 
+        {/* Dynamic Panel Status Footers */}
         <div className="sidebar-footer">
-          <button
-            type="button"
-            className="sidebar-collapse-toggle"
-            onClick={() => setIsSidebarCollapsed((v) => !v)}
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? "→" : "←"}
-          </button>
-
           <button className="logout-btn" onClick={handleLogout} title="Logout">
+            <span className="logout-short-label">❌</span>
             <span className="logout-full-label">Logout</span>
           </button>
         </div>
-
       </aside>
 
-      {/* Main Panel Content */}
+      {/* Main Structural System Node Area wrapper */}
       <main className="admin-main">
         <div
           className="admin-header admin-header-row"
@@ -200,13 +229,8 @@ export default function AdminPanel({ session, profile }) {
             borderBottom: "1px solid #f0f0f0",
           }}
         >
-          {/* Menu Button / Spacer column */}
-          <div
-            className="mobile-menu-toggle-placeholder"
-            style={{ width: isSidebarCollapsed ? "58px" : "48px" }}
-            aria-hidden="true"
-          ></div>
-
+          {/* Dynamic Content offset block matching collapsed structural constraints */}
+          <div className="mobile-header-spacer"></div>
 
           <div
             style={{
@@ -287,7 +311,7 @@ export default function AdminPanel({ session, profile }) {
           </div>
         </div>
 
-        {/* Inbox Panel Dropdown */}
+        {/* Notification Inbox View Layer Panel Dropdowns */}
         {isInboxOpen && (
           <div
             className="admin-inbox-dropdown"
@@ -370,16 +394,6 @@ export default function AdminPanel({ session, profile }) {
                         transition: "all 0.2s ease",
                         boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "#cbd5e1";
-                        e.currentTarget.style.transform = "translateY(-1px)";
-                        e.currentTarget.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.05)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "#e5e7eb";
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "0 1px 2px 0 rgba(0, 0, 0, 0.05)";
-                      }}
                     >
                       <div
                         style={{
@@ -411,7 +425,7 @@ export default function AdminPanel({ session, profile }) {
                         {item.full_name || "Guest User"}
                       </h4>
                       <p style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#4b5563", lineHeight: "1.4", textAlign: "left" }}>
-                        Requested <strong style={{ color: "#1f2937", fontWeight: "500" }}>{item.treatment}</strong> on {item.appointment_date}.
+                        Requested <strong>{item.treatment}</strong> on {item.appointment_date}.
                       </p>
 
                       <div style={{ display: "flex", gap: "8px" }}>
@@ -427,10 +441,7 @@ export default function AdminPanel({ session, profile }) {
                             fontSize: "12px",
                             fontWeight: "600",
                             cursor: "pointer",
-                            transition: "background-color 0.15s",
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#059669")}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#10b981")}
                         >
                           Approve
                         </button>
@@ -445,10 +456,7 @@ export default function AdminPanel({ session, profile }) {
                             fontSize: "12px",
                             fontWeight: "500",
                             cursor: "pointer",
-                            transition: "background-color 0.15s",
                           }}
-                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e5e7eb")}
-                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
                         >
                           Review Details
                         </button>
@@ -473,10 +481,7 @@ export default function AdminPanel({ session, profile }) {
                 backgroundColor: "#ffffff",
                 borderTop: "1px solid #f3f4f6",
                 cursor: "pointer",
-                transition: "background-color 0.15s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f8fafc")}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#ffffff")}
             >
               See all appointments
             </div>
