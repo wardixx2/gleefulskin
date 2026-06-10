@@ -5,6 +5,11 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import AppointmentBooking from "./pages/AppointmentBooking.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminAppointments from "./pages/admin/AdminAppointments.jsx";
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminTreatments from "./pages/admin/AdminTreatments.jsx";
+import AdminSettings from "./pages/admin/AdminSettings.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile.jsx";
 import { supabase } from "./lib/supabase.js";
@@ -182,7 +187,14 @@ export default function App() {
               <AdminPanel session={session} profile={profile} />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="appointments" element={<AdminAppointments />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="treatments" element={<AdminTreatments />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
         <Route path="*" element={<h1>404 Page Not Found</h1>} />
       </Routes>
     </BrowserRouter>
