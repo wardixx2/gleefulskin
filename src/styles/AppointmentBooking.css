@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. VARIABLES & GLOBAL RESETS
+   ========================================================================== */
 :root {
   --primary-pink: #ffb7b2;
   --light-pink: #ffe5e5;
@@ -18,34 +21,262 @@ body {
   background-color: #fff9f9;
   color: var(--charcoal);
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
-/* HEADER */
-.header {
+/* ==========================================================================
+   2. DESKTOP MAIN CORE LAYOUT (GRID TRACKER ENGINE)
+   ========================================================================== */
+.admin-layout {
+  width: 100vw;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background-color: #fff9f9;
+  transition: grid-template-columns 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop Collapsed Sidebar Grid Frame Changes */
+.admin-layout.sidebar-collapsed {
+  grid-template-columns: 92px 1fr;
+}
+
+/* ==========================================================================
+   3. SIDEBAR STRUCTURE (DESKTOP DEFAULT)
+   ========================================================================== */
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #8b4a55 0%, #9d5a67 100%);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+  transition: padding 0.25s ease, width 0.25s ease;
+  z-index: 100;
+}
+
+.sidebar-toggle-wrapper {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Desktop Collapse Arrow Anchor */
+.sidebar-collapse-toggle {
+  margin-left: auto;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  margin-top: 0; /* Override common template margins */
+}
+
+.sidebar-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Brand Title Formatting */
+.sidebar-brand {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(183, 110, 121, 0.14);
+  margin-bottom: 24px;
+}
+
+.sidebar-brand h2 {
+  color: #8b3a48;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 2px;
+}
+
+.sidebar-brand p.sidebar-role {
+  color: #7d4f55;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-style: normal;
+}
+
+/* Sidebar Options & Anchors */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(183, 110, 121, 0.14);
+  border-radius: 14px;
+  color: #8b3a48;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background: #ffe9e9;
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  background: var(--light-pink);
+  border-color: var(--primary-pink);
+  color: var(--rose-gold);
+  box-shadow: 0 4px 12px rgba(139, 58, 72, 0.08);
+}
+
+.menu-icon {
+  font-size: 1.2rem;
+}
+
+/* Logout Handling Styles */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #8b4a55;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 0;
+}
+
+.logout-btn:hover {
+  background: #a35b67;
+  transform: translateY(-2px);
+}
+
+/* Layout fallback hides for standard view overrides */
+.sidebar-toggle-btn,
+.menu-short-label,
+.logout-short-label,
+.mobile-header-spacer {
+  display: none !important;
+}
+
+/* ==========================================================================
+   4. DESKTOP RUNTIME SIDEBAR COLLAPSED MODIFICATIONS
+   ========================================================================== */
+.sidebar-collapsed .admin-sidebar {
+  padding: 24px 12px;
+  align-items: center;
+}
+
+.sidebar-collapsed .sidebar-toggle-wrapper {
+  justify-content: center;
+}
+
+.sidebar-collapsed .sidebar-collapse-toggle {
+  margin-left: 0;
+}
+
+.sidebar-collapsed .sidebar-brand {
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  margin-bottom: 24px;
+}
+
+.sidebar-collapsed .sidebar-brand h2 {
+  font-size: 0;
+}
+
+.sidebar-collapsed .sidebar-brand h2::first-letter {
+  font-size: 1.3rem;
+}
+
+.sidebar-collapsed .sidebar-brand p.sidebar-role,
+.sidebar-collapsed .menu-full-label,
+.sidebar-collapsed .logout-full-label {
+  display: none !important;
+}
+
+.sidebar-collapsed .sidebar-link {
+  width: 54px;
+  height: 50px;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebar-collapsed .logout-btn {
+  width: 54px;
+  height: 50px;
+  padding: 0;
+}
+
+/* ==========================================================================
+   5. BOOKING WORKSPACE LAYOUT & COMPONENT DESIGN
+   ========================================================================== */
+.admin-main {
+  padding: 2rem;
+  width: 100%;
+}
+
+/* CUSTOM PAGE HEADER EXTENSION CARD */
+.page-header.card {
   background-color: var(--light-pink);
   border-bottom: 2px solid var(--primary-pink);
   text-align: center;
   padding: 2.5rem 1rem;
+  margin-bottom: 2rem;
+  border-radius: 15px;
 }
 
-.header h1 {
+.page-header h1 {
   color: var(--rose-gold);
   font-size: 2.5rem;
   letter-spacing: 2px;
   margin-bottom: 0.5rem;
 }
 
-.header p {
+.page-header p {
   color: var(--dark-pink);
   font-style: italic;
   font-size: 1.1rem;
 }
 
-/* LAYOUT */
+/* PAGE WRAPPERS */
 .container {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .grid {
@@ -60,12 +291,12 @@ body {
   }
 }
 
-/* CARD */
+/* CARD MODULE */
 .card {
   background: var(--white);
   border-radius: 15px;
   padding: 2rem;
-  box-shadow: 0 10px 20px rgba(255, 183, 178, 0.2);
+  box-shadow: 0 10px 20px #ffb7b233;
   border: 1px solid var(--light-pink);
 }
 
@@ -77,7 +308,7 @@ h2 {
   padding-bottom: 0.5rem;
 }
 
-/* SERVICES */
+/* SERVICE ITEMS SELECTORS */
 .service-option {
   display: flex;
   justify-content: space-between;
@@ -114,7 +345,7 @@ h2 {
   color: var(--rose-gold);
 }
 
-/* FORM */
+/* TRANSACTION ACTIONS FORMS */
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -146,8 +377,9 @@ textarea:focus {
   box-shadow: 0 0 5px rgba(183, 110, 121, 0.3);
 }
 
-/* BUTTON */
-button {
+/* SUBMIT CONTROLS ENGINE */
+button[type="submit"],
+.card button {
   width: 100%;
   background-color: var(--rose-gold);
   color: white;
@@ -161,11 +393,12 @@ button {
   margin-top: 1rem;
 }
 
-button:hover {
+button[type="submit"]:hover,
+.card button:hover {
   background-color: var(--dark-pink);
 }
 
-/* MODAL */
+/* SYSTEM NOTIFICATION POPUPS MODAL */
 .modal {
   position: fixed;
   top: 0;
@@ -201,4 +434,134 @@ button:hover {
 
 .close-btn:hover {
   background-color: var(--dark-pink);
+}
+
+/* ==========================================================================
+   6. MOBILE VIEWPORT MEDIA RESPONSIVE DEFINITIONS (BREAKPOINT AT 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .admin-layout {
+    display: block;
+    position: relative;
+  }
+
+  /* Structural height block buffer matching the 60px viewport space layout */
+  .mobile-header-spacer {
+    display: block !important;
+    height: 60px;
+    width: 100%;
+  }
+
+  /* Absolute position pinned dynamic container element */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.18);
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease;
+  }
+
+  .sidebar-collapse-toggle {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE A: MINIFIED COLLAPSED LAYOUT (60px track display layout)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-collapsed {
+    width: 60px;
+    padding: 10px 0;
+    align-items: center;
+    background: #8b4a55;
+    overflow: hidden;
+  }
+
+  /* Erase visual clutter completely in closed minified mode */
+  .admin-sidebar.mobile-collapsed .sidebar-brand,
+  .admin-sidebar.mobile-collapsed .sidebar-menu,
+  .admin-sidebar.mobile-collapsed .sidebar-footer {
+    display: none !important;
+  }
+
+  .admin-sidebar.mobile-collapsed .sidebar-toggle-wrapper {
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE B: EXPANDED TRAY (Full layout mobile overlay drawer)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-expanded {
+    width: 280px;
+    padding: 20px 16px;
+    align-items: stretch;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-toggle-wrapper {
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand {
+    display: block !important;
+    width: 100%;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand p.sidebar-role,
+  .admin-sidebar.mobile-expanded .menu-full-label,
+  .admin-sidebar.mobile-expanded .logout-full-label {
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-menu {
+    display: flex !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 16px;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-footer {
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .logout-btn {
+    width: 100%;
+    justifyContent: center;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE SYSTEM TOGGLE TRIGGER COMPONENT
+     ------------------------------------------------------------------------ */
+  .sidebar-toggle-wrapper {
+    display: flex !important;
+  }
+
+  .sidebar-toggle-btn {
+    display: flex !important;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.4rem;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    align-items: center;
+    justifyContent: center;
+    transition: background 0.2s ease;
+  }
+
+  .sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  /* Core Canvas Adjustments for smaller touch displays running beside mini-bar */
+  .admin-main {
+    padding: 16px;
+    width: 100%;
+  }
 }

@@ -1,6 +1,4 @@
-
 import { useEffect, useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import "../styles/Dashboard.css";
@@ -8,6 +6,8 @@ import "../styles/Dashboard.css";
 export default function Dashboard({ session, profile }) {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
   const navigate = useNavigate();
 
   // 🔐 Redirect admins to admin panel
@@ -29,7 +29,6 @@ export default function Dashboard({ session, profile }) {
         "id, full_name, treatment, appointment_date, appointment_time, status, created_at"
       );
 
-      // Admin sees all appointments; regular users see only their own
       if (profile?.role !== "admin") {
         query = query.eq("user_id", session.user.id);
       }
@@ -45,7 +44,7 @@ export default function Dashboard({ session, profile }) {
         setAppointments(data || []);
       }
 
-      setLoading(false);
+      loading && setLoading(false);
     };
 
     fetchAppointments();
@@ -59,48 +58,90 @@ export default function Dashboard({ session, profile }) {
   };
 
   return (
-    <div className="page dashboard-page">
-      <aside className="dashboard-sidebar">
-        <div className="sidebar-brand">GLEEFUL</div>
-        <div className="sidebar-summary">
-          <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
+    <div 
+      className={`page dashboard-page admin-layout ${
+        isCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
+      {/* Mobile structural offset element */}
+      <div className="mobile-header-spacer"></div>
+
+      {/* Sidebar - Perfectly matched with AppointmentBooking layout */}
+      <aside 
+        className={`admin-sidebar ${
+          isMobileExpanded ? "mobile-expanded" : "mobile-collapsed"
+        }`}
+      >
+        {/* Persistent Layout Interactive Controls Wrapper */}
+        <div className="sidebar-toggle-wrapper">
+          {/* Desktop Collapse Arrow Trigger */}
+          <button 
+            className="sidebar-collapse-toggle" 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            type="button"
+          >
+            {isCollapsed ? "➔" : "←"}
+          </button>
+
+          {/* Mobile Hamburg Engine Trigger Button */}
+          <button 
+            className="sidebar-toggle-btn"
+            onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+            type="button"
+          >
+            ☰
+          </button>
         </div>
-        <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-link active">
-            Dashboard
+
+        <div className="sidebar-brand">
+          <h2>GLEEFUL</h2>
+          <p className="sidebar-role">
+            {profile?.role === "admin" ? "Administrator" : "Customer"}
+          </p>
+        </div>
+
+        <nav className="sidebar-menu">
+          <Link to="/dashboard" className="sidebar-link active" title="Dashboard">
+            <span className="menu-icon">📊</span>
+            <span className="menu-full-label">Dashboard</span>
+            <span className="menu-short-label">Dash</span>
           </Link>
-          <Link to="/book" className="sidebar-link">
-            Book Appointment
+          <Link to="/book" className="sidebar-link" title="Book Appointment">
+            <span className="menu-icon">📅</span>
+            <span className="menu-full-label">Book Appointment</span>
+            <span className="menu-short-label">Book</span>
           </Link>
-          <Link to="/profile" className="sidebar-link">
-            My Profile
+          <Link to="/profile" className="sidebar-link" title="My Profile">
+            <span className="menu-icon">👤</span>
+            <span className="menu-full-label">My Profile</span>
+            <span className="menu-short-label">Prof</span>
           </Link>
           {profile?.role === "admin" && (
-            <Link to="/admin" className="sidebar-link">
-              Admin Panel
+            <Link to="/admin" className="sidebar-link" title="Admin Panel">
+              <span className="menu-icon">⚙️</span>
+              <span className="menu-full-label">Admin Panel</span>
+              <span className="menu-short-label">Admin</span>
             </Link>
           )}
         </nav>
+
         <div className="sidebar-footer">
-          <button className="sidebar-logout" onClick={handleLogout}>
-            Logout
+          <button className="logout-btn" onClick={handleLogout} title="Logout">
+            <span className="logout-full-label">Logout</span>
+            <span className="logout-short-label">Exit</span>
           </button>
         </div>
       </aside>
+      
 
-      <main className="dashboard-main">
-        <div className="dashboard-welcome card">
-          <div className="welcome-content">
-            <h2>
-              Welcome, <span className="highlight">{profile?.full_name || session?.user?.email}</span>
-            </h2>
-            <p>
-              {profile?.role === "admin"
-                ? "Manage appointments, customers, and treatment schedules from your salon dashboard."
-                : "Track your upcoming beauty sessions and continue your skincare journey with us."}
-            </p>
-          </div>
+       <main className="admin-main dashboard-main">
+        <div className="page-header card">
+          <h1>Welcome, <span className="highlight">{profile?.full_name || session?.user?.email}</span></h1>
+          <p>Track your upcoming beauty sessions and continue your skincare journey with us.</p>
         </div>
+
+      {/* Main Panel Frame */}
+     
 
         <div className="stats-grid">
           <div className="stat-card">
@@ -150,5 +191,5 @@ export default function Dashboard({ session, profile }) {
         </div>
       </main>
     </div>
-      );
+  );
 }

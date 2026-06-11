@@ -9,6 +9,10 @@ export default function AppointmentBooking({ session, profile }) {
   const [selectedService, setSelectedService] = useState(null);
   const navigate = useNavigate();
 
+  // Desktop & Mobile Sidebar State Controls
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -132,41 +136,82 @@ export default function AppointmentBooking({ session, profile }) {
     });
   };
 
- return (
-    <div className="page dashboard-page">
-      <aside className="dashboard-sidebar">
-        <div className="sidebar-brand">GLEEFUL</div>
-        <div className="sidebar-summary">
-          <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
-        </div>
-        
-       
+  return (
+    <div 
+      className={`page dashboard-page admin-layout ${
+        isCollapsed ? "sidebar-collapsed" : ""
+      }`}
+    >
+      {/* Mobile structural offset element */}
+      <div className="mobile-header-spacer"></div>
 
-        <nav className="sidebar-nav">
+      <aside 
+        className={`admin-sidebar ${
+          isMobileExpanded ? "mobile-expanded" : "mobile-collapsed"
+        }`}
+      >
+        {/* Persistent Layout Interactive Controls Wrapper */}
+        <div className="sidebar-toggle-wrapper">
+          {/* Desktop Collapse Arrow Trigger */}
+          <button 
+            className="sidebar-collapse-toggle" 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            type="button"
+          >
+            {isCollapsed ? "➔" : "←"}
+          </button>
+
+          {/* Mobile Hamburg Engine Trigger Button */}
+          <button 
+            className="sidebar-toggle-btn"
+            onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+            type="button"
+          >
+            ☰
+          </button>
+        </div>
+
+        <div className="sidebar-brand">
+          <h2>GLEEFUL</h2>
+          <p className="sidebar-role">
+            {profile?.role === "admin" ? "Administrator" : "Customer"}
+          </p>
+        </div>
+
+        <nav className="sidebar-menu">
           <Link to="/dashboard" className="sidebar-link" title="Dashboard">
+            <span className="menu-icon">📊</span>
             <span className="menu-full-label">Dashboard</span>
+            <span className="menu-short-label">Dash</span>
           </Link>
           <Link to="/book" className="sidebar-link active" title="Book Appointment">
+            <span className="menu-icon">📅</span>
             <span className="menu-full-label">Book Appointment</span>
+            <span className="menu-short-label">Book</span>
           </Link>
           <Link to="/profile" className="sidebar-link" title="My Profile">
+            <span className="menu-icon">👤</span>
             <span className="menu-full-label">My Profile</span>
+            <span className="menu-short-label">Prof</span>
           </Link>
           {profile?.role === "admin" && (
             <Link to="/admin" className="sidebar-link" title="Admin Panel">
+              <span className="menu-icon">⚙️</span>
               <span className="menu-full-label">Admin Panel</span>
+              <span className="menu-short-label">Admin</span>
             </Link>
           )}
         </nav>
 
         <div className="sidebar-footer">
-          <button className="sidebar-logout" onClick={handleLogout} title="Logout">
-            Logout
+          <button className="logout-btn" onClick={handleLogout} title="Logout">
+            <span className="logout-full-label">Logout</span>
+            <span className="logout-short-label">Exit</span>
           </button>
         </div>
       </aside>
 
-      <main className="dashboard-main">
+      <main className="admin-main dashboard-main">
         <div className="page-header card">
           <h1>Book Your Glow Session</h1>
           <p>Choose the perfect treatment and lock in your next radiant appointment.</p>
@@ -207,7 +252,6 @@ export default function AppointmentBooking({ session, profile }) {
 
             <div className="card">
               <h2>2. Your Details</h2>
-
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
                   <label>Full Name</label>
@@ -280,9 +324,7 @@ export default function AppointmentBooking({ session, profile }) {
         <div className="modal">
           <div className="modal-content">
             <h3>✨ Appointment Requested! ✨</h3>
-            <p>
-              Thank you, <strong>{form.fullName}</strong>!
-            </p>
+            <p>Thank you, <strong>{form.fullName}</strong>!</p>
             <p>
               Service:{" "}
               <span style={{ color: "#B76E79", fontWeight: "bold" }}>
