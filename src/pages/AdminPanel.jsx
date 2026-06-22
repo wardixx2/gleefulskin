@@ -79,7 +79,9 @@ export default function AdminPanel({ session, profile }) {
     { key: "appointments", label: "Appointments", shortLabel: "AP", path: "appointments" },
     { key: "users", label: "Users", shortLabel: "US", path: "users" },
     { key: "treatments", label: "Treatments", shortLabel: "TR", path: "treatments" },
-    { key: "settings", label: "Settings", shortLabel: "ST", path: "settings" },
+    { key: "settings", label: "Settings", shortLabel: "ST", path: "settings" }, {
+    key: "reports", label: "Reports", shortLabel: "RP", path: "reports",},
+
   ];
 
   const active = (p) =>

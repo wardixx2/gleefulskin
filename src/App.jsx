@@ -9,6 +9,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminAppointments from "./pages/admin/AdminAppointments.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
 import AdminTreatments from "./pages/admin/AdminTreatments.jsx";
+import Reports from "./pages/admin/Reports.jsx";
 import AdminSettings from "./pages/admin/AdminSettings.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -202,6 +203,7 @@ export default function App() {
           <Route path="appointments" element={<AdminAppointments />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="treatments" element={<AdminTreatments />} />
+      <Route path="reports" element={<Reports />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
         <Route path="*" element={<h1>404 Page Not Found</h1>} />
