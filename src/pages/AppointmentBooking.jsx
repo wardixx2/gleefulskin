@@ -103,7 +103,7 @@ export default function AppointmentBooking({ session, profile }) {
           email: form.email,
           phone: form.phone,
           treatment: selectedService.name,
-          price: formatPeso(selectedService.price),
+          price: selectedService.price,
           ors_required: selectedService.ors_required,
           ors_number: selectedService.ors_number,
           ors_amount: selectedService.ors_amount,
