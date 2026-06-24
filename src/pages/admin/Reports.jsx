@@ -27,7 +27,7 @@ export default function Reports() {
   // Daily Income
   const dailyIncome = appointments
     .filter((item) => {
-      if (item.status !== "Completed") return false;
+      if (item.status !== "Approved") return false;
 
       const date = new Date(item.appointment_date);
 
@@ -42,7 +42,7 @@ export default function Reports() {
   // Weekly Income
   const weeklyIncome = appointments
     .filter((item) => {
-      if (item.status !== "Completed") return false;
+      if (item.status !== "Approved") return false;
 
       const date = new Date(item.appointment_date);
       const diffDays =
@@ -55,7 +55,7 @@ export default function Reports() {
   // Monthly Income
   const monthlyIncome = appointments
     .filter((item) => {
-      if (item.status !== "Completed") return false;
+      if (item.status !== "Approved") return false;
 
       const date = new Date(item.appointment_date);
 
