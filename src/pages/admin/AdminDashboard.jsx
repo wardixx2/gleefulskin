@@ -96,7 +96,7 @@ export default function AdminDashboard() {
     <div className="admin-dashboard-container">
       <div className="admin-dashboard-header">
         <div>
-         <h1>TEST DEPLOY 999</h1>
+          <h1>📊 Business Analytics</h1>
           <p>Gleeful Skin Wellness Center Dashboard</p>
         </div>
       </div>
