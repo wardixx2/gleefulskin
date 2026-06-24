@@ -83,46 +83,54 @@ export default function AppointmentBooking({ session, profile }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!selectedService) {
-      await showWarning("Please select a skincare treatment first.");
+  console.log("SELECTED SERVICE:", selectedService);
+  console.log("PRICE:", selectedService?.price);
+  console.log("TYPE:", typeof selectedService?.price);
+
+  if (!selectedService) {
+    await showWarning("Please select a skincare treatment first.");
+    return;
+  }
+
+  if (!session?.user?.id) {
+    await showWarning("Please log in to book an appointment.");
+    return;
+  }
+
+  try {
+    const { error } = await supabase.from("appointments").insert([
+      {
+        user_id: session.user.id,
+        full_name: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        treatment: selectedService.name,
+        price: Number(
+          String(selectedService.price)
+            .replace(/[₱,]/g, "")
+            .trim()
+        ),
+        ors_required: selectedService.ors_required,
+        ors_number: selectedService.ors_number,
+        ors_amount: selectedService.ors_amount,
+        appointment_date: form.date,
+        appointment_time: form.time,
+        status: "Pending",
+      },
+    ]);
+
+    if (error) {
+      await showError(error.message, "Supabase error");
       return;
     }
 
-    if (!session?.user?.id) {
-      await showWarning("Please log in to book an appointment.");
-      return;
-    }
-
-    try {
-      const { error } = await supabase.from("appointments").insert([
-        {
-          user_id: session.user.id,
-          full_name: form.fullName,
-          email: form.email,
-          phone: form.phone,
-          treatment: selectedService.name,
-          price: selectedService.price,
-          ors_required: selectedService.ors_required,
-          ors_number: selectedService.ors_number,
-          ors_amount: selectedService.ors_amount,
-          appointment_date: form.date,
-          appointment_time: form.time,
-          status: "Pending",
-        },
-      ]);
-
-      if (error) {
-        await showError(error.message, "Supabase error");
-        return;
-      }
-
-      setModalOpen(true);
-    } catch (err) {
-      await showError(err.message, "Unexpected error");
-    }
-  };
+    setModalOpen(true);
+  } catch (err) {
+    await showError(err.message, "Unexpected error");
+  }
+};
 
   const closeModal = () => {
     setModalOpen(false);
