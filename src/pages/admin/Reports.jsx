@@ -40,17 +40,18 @@ export default function Reports() {
     .reduce((sum, item) => sum + Number(item.price || 0), 0);
 
   // Weekly Income
-  const weeklyIncome = appointments
-    .filter((item) => {
-      if (item.status !== "Approved") return false;
+const weeklyIncome = appointments
+  .filter((item) => {
+    if (item.status !== "Approved") return false;
 
-      const date = new Date(item.appointment_date);
-      const diffDays =
-        (today - date) / (1000 * 60 * 60 * 24);
+    const date = new Date(item.appointment_date);
 
-      return diffDays <= 7;
-    })
-    .reduce((sum, item) => sum + Number(item.price || 0), 0);
+    const diffDays =
+      (today - date) / (1000 * 60 * 60 * 24);
+
+    return diffDays >= 0 && diffDays <= 7;
+  })
+  .reduce((sum, item) => sum + Number(item.price || 0), 0);
 
   // Monthly Income
   const monthlyIncome = appointments
