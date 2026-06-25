@@ -68,19 +68,27 @@ export default function Profile({ session, profile }) {
         <div className="sidebar-summary">
           <p className="sidebar-role">{profile?.role === "admin" ? "Administrator" : "Customer"}</p>
         </div>
-        <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-link">
-            Dashboard
+  <nav className="sidebar-menu">
+          <Link to="/dashboard" className="sidebar-link active" title="Dashboard">
+            <span className="menu-icon">📊</span>
+            <span className="menu-full-label">Dashboard</span>
+            <span className="menu-short-label">Dash</span>
           </Link>
-          <Link to="/book" className="sidebar-link">
-            Book Appointment
+          <Link to="/book" className="sidebar-link" title="Book Appointment">
+            <span className="menu-icon">📅</span>
+            <span className="menu-full-label">Book Appointment</span>
+            <span className="menu-short-label">Book</span>
           </Link>
-          <Link to="/profile" className="sidebar-link active">
-            My Profile
+          <Link to="/profile" className="sidebar-link" title="My Profile">
+            <span className="menu-icon">👤</span>
+            <span className="menu-full-label">My Profile</span>
+            <span className="menu-short-label">Prof</span>
           </Link>
           {profile?.role === "admin" && (
-            <Link to="/admin" className="sidebar-link">
-              Admin Panel
+            <Link to="/admin" className="sidebar-link" title="Admin Panel">
+              <span className="menu-icon">⚙️</span>
+              <span className="menu-full-label">Admin Panel</span>
+              <span className="menu-short-label">Admin</span>
             </Link>
           )}
         </nav>
