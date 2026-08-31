@@ -1,0 +1,77 @@
+/* Customer portal content — matches admin panels, stats, and cards */
+
+.admin-layout {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.admin-main {
+  min-width: 0;
+}
+
+.customer-header-action {
+  min-width: 148px;
+  padding: 12px 18px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.customer-header-action.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.customer-profile .appointments-panel__body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.customer-booking .service-option {
+  margin-bottom: 0.65rem;
+}
+
+.customer-booking .service-option:last-child {
+  margin-bottom: 0;
+}
+
+.customer-booking form button[type="submit"] {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.customer-profile .profile-container {
+  max-width: none;
+  margin: 0;
+}
+
+.customer-profile .profile-card {
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+.customer-profile .profile-card h2 {
+  display: none;
+}
+
+.customer-empty-action {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .customer-booking {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .customer-header-action {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+  }
+
+  .customer-header-action span {
+    font-size: 0.75rem;
+  }
+}

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   TREATMENTS ADMIN PANEL
+   ========================================================================== */
+
+.treatments-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.treatments-panel__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.treatments-inline-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--rose-gold);
+  font-weight: 600;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.treatments-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.treatments-modal__dialog {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.treatments-modal__close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 6px;
+  background: #f3f4f6;
+  color: #555;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.treatments-modal__close:hover {
+  background: #e5e7eb;
+  color: var(--text-dark);
+}
+
+.treatments-form-card {
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 1.25rem 1.5rem;
+}
+
+.treatments-form-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.treatments-form-card .form-group {
+  margin-bottom: 1rem;
+}
+
+.treatments-form-card .form-group label {
+  font-size: 0.8125rem;
+}
+
+.treatments-form-card .form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--charcoal);
+  cursor: pointer;
+}
+
+.treatments-form-card .form-check input {
+  width: auto;
+  accent-color: var(--rose-gold);
+}
+
+.treatments-form-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.treatments-list-card {
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.treatments-list-card__header {
+  padding: 1.25rem 1.5rem 0;
+}
+
+.treatments-list-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.treatments-table__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.treatment-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.treatment-status-pill--active {
+  background: #edf7ed;
+  color: #388e3c;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.treatment-status-pill--inactive {
+  background: #f3f4f6;
+  color: #666;
+  border: 1px solid #e0e0e0;
+}
+
+.treatment-ors-tag {
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+}
+
+.treatment-ors-tag--required {
+  color: var(--rose-gold);
+  font-weight: 600;
+}

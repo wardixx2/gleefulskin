@@ -1,0 +1,67 @@
+@import "./Login.css";
+
+
+.register-container {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 1.25rem;
+}
+
+.register-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2.25rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-soft);
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+}
+
+.register-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-pink), var(--rose-gold));
+  border-radius: 0 0 4px 4px;
+}
+
+.register-card h2 {
+  font-family: var(--font-display);
+  text-align: center;
+  color: var(--rose-gold);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--light-pink);
+}
+
+.register-footer {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--light-pink);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.register-footer a {
+  color: var(--rose-gold);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.register-footer a:hover {
+  color: var(--dark-pink);
+  text-decoration: underline;
+}

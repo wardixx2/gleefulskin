@@ -1,0 +1,75 @@
+/* ==========================================================================
+   REPORTS PAGE
+   ========================================================================== */
+
+.reports-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reports-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.reports-stat-card {
+  background: var(--white);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.reports-stat-card__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+}
+
+.reports-stat-card__value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.02em;
+}
+
+.reports-stat-card--dailyIncome .reports-stat-card__value,
+.reports-stat-card--weeklyIncome .reports-stat-card__value,
+.reports-stat-card--monthlyIncome .reports-stat-card__value,
+.reports-stat-card--totalIncome .reports-stat-card__value {
+  color: var(--gold);
+}
+
+.reports-stat-card--pendingCount .reports-stat-card__value {
+  color: var(--rose-gold);
+}
+
+.reports-stat-card--approvedCount .reports-stat-card__value {
+  color: #388e3c;
+}
+
+.reports-table-panel {
+  overflow: hidden;
+}
+
+.reports-table-panel__header {
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 0;
+}
+
+.reports-table-panel .appt-toolbar {
+  border-bottom: 1px solid var(--border-soft);
+}
+
+@media (max-width: 768px) {
+  .reports-stat-card__value {
+    font-size: 1.15rem;
+  }
+}

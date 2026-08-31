@@ -1,0 +1,58 @@
+/* ==========================================================================
+   PROFILE PAGE
+   ========================================================================== */
+
+.profile-container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.profile-card h2 {
+  font-family: var(--font-display);
+  color: var(--rose-gold);
+  font-size: 1.5rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--light-pink);
+}
+
+.profile-card .form-grid {
+  display: grid;
+  gap: 0;
+}
+
+.profile-card button[type="submit"] {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.95rem;
+  background: var(--rose-gold);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.profile-card button[type="submit"]:hover:not(:disabled) {
+  background: var(--dark-pink);
+  transform: translateY(-1px);
+}
+
+.profile-card button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.form-message {
+  margin-top: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  background: var(--light-pink);
+  color: var(--rose-darker);
+  border: 1px solid var(--primary-pink);
+}

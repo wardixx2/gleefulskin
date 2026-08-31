@@ -1,0 +1,230 @@
+/* Booking page content only — layout/sidebar live in AdminPanel.css */
+
+.customer-booking-page {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.customer-booking-page .appointments-panel__body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.customer-booking {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.customer-booking__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: min(62vh, 560px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.service-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  border: 1.5px solid var(--border-soft);
+  border-radius: 12px;
+  background: #fafafa;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.service-option:hover {
+  border-color: var(--rose-gold);
+  background: #fff;
+}
+
+.service-option.selected {
+  border-color: var(--rose-gold);
+  background: #fff5f6;
+  box-shadow: 0 0 0 3px rgba(183, 110, 121, 0.12);
+}
+
+.service-info {
+  min-width: 0;
+}
+
+.service-info h4 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.service-info p {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+.price {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--rose-gold);
+  font-size: 0.95rem;
+}
+
+.customer-booking__picked {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: #fff5f6;
+  border: 1px solid rgba(183, 110, 121, 0.18);
+}
+
+.customer-booking__picked-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  margin-bottom: 0.2rem;
+}
+
+.customer-booking__picked-value {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.customer-booking__hint {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.customer-booking .form-group {
+  margin-bottom: 0.9rem;
+}
+
+.customer-booking label,
+.customer-profile label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--rose-gold);
+}
+
+.customer-booking input,
+.customer-booking select,
+.customer-profile input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 1.5px solid var(--primary-pink);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--charcoal);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.customer-booking input:focus,
+.customer-booking select:focus,
+.customer-profile input:focus {
+  border-color: var(--rose-gold);
+  box-shadow: 0 0 0 3px rgba(183, 110, 121, 0.12);
+}
+
+.customer-booking button[type="submit"],
+.customer-profile button[type="submit"] {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--rose-gold);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.customer-booking button[type="submit"]:hover,
+.customer-profile button[type="submit"]:hover {
+  background: var(--dark-pink);
+}
+
+.customer-booking button[type="submit"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.booking-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 37, 32, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.booking-modal__card {
+  background: var(--white);
+  padding: 2rem 1.75rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.booking-modal__card h3 {
+  margin: 0 0 0.75rem;
+  color: var(--rose-gold);
+  font-size: 1.25rem;
+}
+
+.booking-modal__card p {
+  margin: 0.35rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.booking-modal__close {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--rose-gold);
+  color: #fff;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.booking-modal__close:hover {
+  background: var(--dark-pink);
+}
+
+@media (max-width: 900px) {
+  .customer-booking {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-booking__list {
+    max-height: none;
+  }
+}

@@ -1,0 +1,235 @@
+/* ==========================================================================
+   INBOX PAGE
+   ========================================================================== */
+
+.inbox-page {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100svh;
+  background: linear-gradient(135deg, #fffbf9 0%, #fdf6f0 50%, #faf2ec 100%);
+}
+
+.inbox-page .dashboard-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #b76e79 0%, #a85f6d 50%, #8b4a55 100%);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 4px 0 24px rgba(183, 110, 121, 0.25);
+}
+
+.inbox-page .sidebar-brand {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(229, 220, 203, 0.1);
+  margin-bottom: 16px;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.inbox-page .sidebar-summary {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.inbox-page .sidebar-role {
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.inbox-page .sidebar-subtle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.inbox-page .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inbox-page .sidebar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px 12px 20px;
+  border-radius: var(--radius-md);
+  color: #e5dccb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.inbox-page .sidebar-link::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 3px;
+  background: var(--gold);
+  transition: height 0.2s ease;
+}
+
+.inbox-page .sidebar-link:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+}
+
+.inbox-page .sidebar-link.active {
+  background: var(--white);
+  color: var(--text-dark);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.inbox-page .sidebar-link.active::before {
+  height: 55%;
+}
+
+.inbox-main {
+  padding: 2.5rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inbox-header {
+  padding: 2rem 2.25rem;
+}
+
+.inbox-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.inbox-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.inbox-list {
+  padding: 0;
+  overflow: hidden;
+}
+
+.inbox-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.inbox-item {
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-soft);
+  cursor: pointer;
+  width: 100%;
+  font-family: var(--font-body);
+  transition: background var(--transition-fast);
+}
+
+.inbox-item:last-child {
+  border-bottom: none;
+}
+
+.inbox-item:hover {
+  background: rgba(183, 110, 121, 0.04);
+}
+
+.inbox-item.unread {
+  background: rgba(183, 110, 121, 0.06);
+  border-left: 3px solid var(--rose-gold);
+}
+
+.inbox-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.inbox-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.inbox-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rose-gold);
+  flex-shrink: 0;
+}
+
+.inbox-time {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.inbox-message {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin-bottom: 0.75rem;
+}
+
+.inbox-appointment {
+  display: grid;
+  gap: 4px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-warm);
+  border: 1px solid var(--border-soft);
+}
+
+.inbox-appointment-row {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.inbox-appointment-row strong {
+  color: var(--rose-gold);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .inbox-page {
+    grid-template-columns: 1fr;
+  }
+
+  .inbox-page .dashboard-sidebar {
+    display: none;
+  }
+
+  .inbox-main {
+    padding: 1.25rem;
+  }
+}

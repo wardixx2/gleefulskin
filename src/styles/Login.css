@@ -1,0 +1,224 @@
+/* ==========================================================================
+   LOGIN PAGE
+   ========================================================================== */
+
+.page.auth-page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.page.auth-page::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 183, 178, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page.auth-page::after {
+  content: "";
+  position: absolute;
+  bottom: -15%;
+  left: -8%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(183, 110, 121, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, var(--light-pink) 0%, rgba(255, 229, 229, 0.6) 100%);
+  border-bottom: 1px solid rgba(255, 183, 178, 0.5);
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  color: var(--rose-gold);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+}
+
+.header p {
+  color: var(--dark-pink);
+  font-style: italic;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 1.25rem;
+}
+
+.login-card {
+  background: var(--white);
+  padding: 2.5rem 2.25rem;
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-soft);
+  position: relative;
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-pink), var(--rose-gold));
+  border-radius: 0 0 4px 4px;
+}
+
+.login-card h2 {
+  font-family: var(--font-display);
+  text-align: center;
+  color: var(--rose-gold);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1.75rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 4rem;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--dark-pink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  user-select: none;
+}
+
+.toggle-password:hover {
+  color: var(--rose-gold);
+  background: var(--light-pink);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--rose-gold);
+  cursor: pointer;
+}
+
+.forgot-pass {
+  color: var(--rose-gold);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.forgot-pass:hover {
+  color: var(--dark-pink);
+}
+
+.auth-submit-btn,
+.login-card button[type="submit"],
+.register-card button[type="submit"],
+.register-card form button[type="submit"] {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--rose-gold);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.auth-submit-btn:hover:not(:disabled),
+.login-card button[type="submit"]:hover:not(:disabled),
+.register-card button[type="submit"]:hover:not(:disabled),
+.register-card form button[type="submit"]:hover:not(:disabled) {
+  background: var(--dark-pink);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-submit-btn:disabled,
+.login-card button[type="submit"]:disabled,
+.register-card button[type="submit"]:disabled,
+.register-card form button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.login-footer {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--light-pink);
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.login-footer .link {
+  color: var(--rose-gold);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.login-footer .link:hover {
+  color: var(--dark-pink);
+  text-decoration: underline;
+}

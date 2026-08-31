@@ -1,0 +1,595 @@
+/* ==========================================================================
+   1. RESET & BASE VARIABLES
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100vh;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background: #fff7f7;
+}
+
+/* ==========================================================================
+   2. DESKTOP SCREEN LAYOUT RULES (GRID SYSTEM W/ TOGGLE)
+   ========================================================================== */
+.admin-layout {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background: linear-gradient(
+    135deg,
+    #fff7f5 0%,
+    #fff1f2 50%,
+    #fdf2f8 100%
+  );
+  transition: grid-template-columns 0.25s ease;
+  overflow-x: hidden;
+}
+
+/* Desktop Collapsed Grid State */
+.admin-layout.sidebar-collapsed {
+  grid-template-columns: 92px 1fr;
+}
+
+/* ==========================================================================
+   3. SIDEBAR STRUCTURE & DESIGN (DESKTOP DEFAULT)
+   ========================================================================== */
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #8b4a55 0%, #9d5a67 100%);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+  transition: padding 0.25s ease, width 0.25s ease;
+  z-index: 100;
+}
+
+/* Desktop Header Collapse Toggle Button */
+.sidebar-collapse-toggle {
+  align-self: flex-end;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+/* Brand Container */
+.sidebar-brand {
+  background: #fff;
+  border-radius: 24px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid rgba(183, 110, 121, 0.14);
+  transition: padding 0.25s ease, border-radius 0.25s ease;
+}
+
+.sidebar-brand h2 {
+  font-family: var(--font-display);
+  color: #8b3a48;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-brand p {
+  color: #7d4f55;
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   4. NAVIGATION MENU BUTTONS & LINKS
+   ========================================================================== */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+  flex: 1;
+}
+
+.sidebar-menu button {
+  position: relative;
+  width: 100%;
+  padding: 13px 18px 13px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.88);
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-menu button::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 3px;
+  background: var(--gold);
+  transition: height 0.2s ease;
+}
+
+.sidebar-menu button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateX(2px);
+}
+
+.sidebar-menu button.active {
+  background: #ffffff;
+  color: #8b3a48;
+  border-color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: none;
+}
+
+.sidebar-menu button.active::before {
+  height: 55%;
+}
+
+/* ==========================================================================
+   5. SIDEBAR FOOTER & LOGOUT
+   ========================================================================== */
+.sidebar-footer {
+  margin-top: 20px;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  background: #8b4a55;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logout-btn:hover {
+  background: #9d5a67;
+  transform: translateY(-2px);
+}
+
+/* Base states: Hide structural elements reserved for mobile logic on desktop panels */
+.sidebar-toggle-wrapper,
+.menu-short-label,
+.logout-short-label,
+.mobile-header-spacer {
+  display: none !important;
+}
+
+/* ==========================================================================
+   6. DESKTOP SIDEBAR COLLAPSED TRANSITIONS
+   ========================================================================== */
+.sidebar-collapsed .admin-sidebar {
+  padding: 18px 12px;
+  align-items: center;
+}
+
+.sidebar-collapsed .sidebar-collapse-toggle {
+  align-self: center;
+}
+
+.sidebar-collapsed .sidebar-brand {
+  width: 58px;
+  min-height: 58px;
+  padding: 12px 8px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justifyContent: center;
+}
+
+.sidebar-collapsed .sidebar-brand h2 {
+  font-size: 0;
+}
+
+.sidebar-collapsed .sidebar-brand h2::first-letter {
+  font-size: 1.3rem;
+}
+
+.sidebar-collapsed .sidebar-brand p,
+.sidebar-collapsed .menu-full-label,
+.sidebar-collapsed .logout-full-label {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-menu {
+  width: 100%;
+  gap: 12px;
+}
+
+.sidebar-collapsed .sidebar-menu button {
+  width: 58px;
+  height: 52px;
+  padding: 0;
+  align-items: center;
+  justifyContent: center;
+  text-align: center;
+}
+
+.sidebar-collapsed .menu-short-label,
+.sidebar-collapsed .logout-short-label {
+  display: inline-flex !important;
+  font-size: 0.76rem;
+  letter-spacing: 0;
+}
+
+.sidebar-collapsed .sidebar-footer {
+  width: 100%;
+  display: flex;
+  justifyContent: center;
+}
+
+.sidebar-collapsed .logout-btn {
+  width: 58px;
+  height: 52px;
+  padding: 0;
+}
+
+/* ==========================================================================
+   7. MAIN CONTENT AREA COMPONENT PANELS
+   ========================================================================== */
+.admin-main {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* HEADER COMPONENT */
+.admin-header {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(183, 110, 121, 0.08);
+}
+
+.admin-header-row {
+  display: flex;
+  align-items: center;
+  justifyContent: space-between;
+  gap: 20px;
+}
+
+.admin-header h1 {
+  font-family: var(--font-display);
+  color: #b76e79;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.admin-header p {
+  color: #7d4f55;
+}
+
+/* INBOX / NOTIFICATION BADGE */
+.notification-badge {
+  display: inline-flex;
+  align-items: center;
+  justifyContent: space-between;
+  gap: 12px;
+  min-width: 180px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(183, 110, 121, 0.18);
+  background: #fff1f7;
+  color: #8b3a48;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.notification-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(183, 110, 121, 0.12);
+}
+
+.notification-badge span {
+  font-size: 0.9rem;
+  color: #7d4f55;
+}
+
+.notification-badge strong {
+  display: inline-flex;
+  min-width: 32px;
+  height: 32px;
+  align-items: center;
+  justifyContent: center;
+  border-radius: 999px;
+  background: #b76e79;
+  color: white;
+}
+
+/* METRICS / STAT CARDS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(183, 110, 121, 0.08);
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card h3 {
+  color: #7a4e57;
+  margin-bottom: 10px;
+}
+
+.stat-card p {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b76e79;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(183, 110, 121, 0.08);
+}
+
+/* DATA TABLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3d6d6;
+  text-align: left;
+  color: #5a3a3a;
+}
+
+table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #faf8f5;
+  color: #8b3a48;
+}
+
+table tbody tr {
+  transition: background 0.15s ease;
+}
+
+table tbody tr:hover {
+  background: rgba(183, 110, 121, 0.04);
+}
+
+/* BUTTON ACTION STATES */
+.approve-btn,
+.delete-btn {
+  padding: 0.4rem 0.85rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+}
+
+.approve-btn {
+  background: #e8f9f0;
+  color: #2c8058;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #fbe8e8;
+  color: #b14949;
+}
+
+.approve-btn:hover,
+.delete-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   8. MOBILE RESPONSIVE VIEWS & OVERRIDES (BREAKPOINT AT 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .admin-layout {
+    display: block;
+    position: relative;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Structural spacer that keeps the main content alignment intact */
+  .mobile-header-spacer {
+    display: block !important;
+    width: 60px;
+  }
+
+  /* Fixed sidebar wrapper initialization overlay */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease;
+  }
+
+  /* Hide default desktop button tracker */
+  .sidebar-collapse-toggle {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE A: COLLAPSED (Pristine Mini-bar, ONLY Toggle Button Shows)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-collapsed {
+    width: 60px;
+    padding: 12px 0;
+    align-items: center;
+  }
+
+  /* Explicitly hide every item to clear up visual real estate */
+  .admin-sidebar.mobile-collapsed .sidebar-brand,
+  .admin-sidebar.mobile-collapsed .sidebar-menu,
+  .admin-sidebar.mobile-collapsed .sidebar-footer,
+  .admin-sidebar.mobile-collapsed .menu-short-label,
+  .admin-sidebar.mobile-collapsed .logout-short-label {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE STATE B: EXPANDED (Full Drawer Tray View Overlay)
+     ------------------------------------------------------------------------ */
+  .admin-sidebar.mobile-expanded {
+    width: 280px;
+    padding: 24px 18px;
+    align-items: stretch;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand {
+    width: 100%;
+    min-height: auto;
+    padding: 10px;
+    border-radius: 24px;
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand h2 {
+    font-size: 1.3rem;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-brand p,
+  .admin-sidebar.mobile-expanded .menu-full-label,
+  .admin-sidebar.mobile-expanded .logout-full-label {
+    display: block !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-menu {
+    display: flex !important;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-menu button {
+    width: 100%;
+    padding: 14px 18px;
+    justify-content: flex-start;
+  }
+
+  .admin-sidebar.mobile-expanded .menu-short-label,
+  .admin-sidebar.mobile-expanded .logout-short-label {
+    display: none !important;
+  }
+
+  .admin-sidebar.mobile-expanded .sidebar-footer {
+    display: block !important;
+    width: 100%;
+  }
+
+  .admin-sidebar.mobile-expanded .logout-btn {
+    width: 100%;
+    padding: 14px;
+    height: auto;
+    justify-content: center;
+  }
+
+  /* ------------------------------------------------------------------------
+     MOBILE TOGGLE LAYOUT ENGINE (PERSISTENT BUTTON ELEMENT)
+     ------------------------------------------------------------------------ */
+  .sidebar-toggle-wrapper {
+    display: flex !important;
+    justifyContent: center;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    margin-bottom: 10px;
+  }
+
+  .sidebar-toggle-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justifyContent: center;
+    transition: background 0.2s;
+  }
+  
+  .sidebar-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  /* Standardizes content layout margins to flow smoothly beside the 60px track */
+  .admin-main {
+    margin-left: 60px;
+    width: calc(100% - 60px);
+    padding: 16px;
+  }
+
+  /* Response adaptations for notification pop-outs on touch displays */
+  .admin-inbox-dropdown {
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    top: 85px !important;
+  }
+}
