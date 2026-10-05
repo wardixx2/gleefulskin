@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import { adminRoute } from "../lib/adminRoutes.js";
@@ -78,6 +78,7 @@ export default function AdminPanel({ session, profile }) {
   const items = [
     { key: "dashboard", label: "Dashboard", shortLabel: "DB", path: "dashboard" },
     { key: "appointments", label: "Appointments", shortLabel: "AP", path: "appointments" },
+    { key: "archives", label: "Archives", shortLabel: "AR", path: "archives" },
     { key: "users", label: "Users", shortLabel: "US", path: "users" },
     { key: "treatments", label: "Treatments", shortLabel: "TR", path: "treatments" },
     { key: "settings", label: "Settings", shortLabel: "ST", path: "settings" },

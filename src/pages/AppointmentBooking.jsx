@@ -3,6 +3,40 @@ import "../styles/AppointmentBooking.css";
 import { supabase } from "../lib/supabase.js";
 import { showError, showWarning } from "../lib/alerts.js";
 
+const AVAILABLE_TIME_SLOTS = [
+  "09:00 AM",
+  "10:30 AM",
+  "01:00 PM",
+  "02:30 PM",
+  "04:00 PM",
+];
+
+function isSlotInPast(slotStr, selectedDateStr) {
+  if (!selectedDateStr) return false;
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const localTodayStr = `${year}-${month}-${day}`;
+
+  if (selectedDateStr !== localTodayStr) {
+    return false;
+  }
+
+  const match = slotStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return false;
+  let [, h, m, meridiem] = match;
+  let hours = parseInt(h, 10);
+  const minutes = parseInt(m, 10);
+  if (meridiem.toUpperCase() === "PM" && hours < 12) hours += 12;
+  if (meridiem.toUpperCase() === "AM" && hours === 12) hours = 0;
+
+  const slotDate = new Date();
+  slotDate.setHours(hours, minutes, 0, 0);
+
+  return slotDate <= now;
+}
+
 export default function AppointmentBooking({ session, profile }) {
   const [selectedService, setSelectedService] = useState(null);
   const [form, setForm] = useState({
@@ -16,6 +50,8 @@ export default function AppointmentBooking({ session, profile }) {
   const [services, setServices] = useState([]);
   const [servicesLoading, setServicesLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
 
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -31,6 +67,72 @@ export default function AppointmentBooking({ session, profile }) {
       email: session.user.email || current.email,
     }));
   }, [session, profile]);
+
+  // Fetch booked slots whenever the selected date changes
+  useEffect(() => {
+    if (!form.date) {
+      setBookedSlots([]);
+      return;
+    }
+
+    let isMounted = true;
+    setLoadingSlots(true);
+
+    const fetchBookedSlots = async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_booked_time_slots", {
+          p_date: form.date,
+        });
+
+        if (!isMounted) return;
+
+        if (!error && Array.isArray(data)) {
+          const slots = data.map((item) =>
+            typeof item === "string" ? item : item.appointment_time
+          );
+          setBookedSlots(slots);
+        } else {
+          // Fallback direct query if RPC is not yet applied
+          const fallback = await supabase
+            .from("appointments")
+            .select("appointment_time")
+            .eq("appointment_date", form.date)
+            .in("status", ["Pending", "Approved", "Completed"]);
+
+          if (!isMounted) return;
+
+          if (!fallback.error && fallback.data) {
+            setBookedSlots(fallback.data.map((r) => r.appointment_time));
+          } else {
+            setBookedSlots([]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to check slot availability:", err);
+        if (isMounted) setBookedSlots([]);
+      } finally {
+        if (isMounted) setLoadingSlots(false);
+      }
+    };
+
+    fetchBookedSlots();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [form.date]);
+
+  // Reset selected time if it becomes booked or past
+  useEffect(() => {
+    if (!form.time) return;
+    const isBooked = bookedSlots.some(
+      (b) => b?.trim().toLowerCase() === form.time.trim().toLowerCase()
+    );
+    const isPast = isSlotInPast(form.time, form.date);
+    if (isBooked || isPast) {
+      setForm((cur) => ({ ...cur, time: "" }));
+    }
+  }, [bookedSlots, form.date, form.time]);
 
   const formatPeso = (value) => {
     if (value === null || value === undefined || value === "") return "₱0";
@@ -78,33 +180,72 @@ export default function AppointmentBooking({ session, profile }) {
       return;
     }
 
+    if (!form.time) {
+      await showWarning("Please select an available preferred time slot.");
+      return;
+    }
+
+    const isBooked = bookedSlots.some(
+      (b) => b?.trim().toLowerCase() === form.time.trim().toLowerCase()
+    );
+    if (isBooked) {
+      await showWarning("This time slot is already booked. Please choose another slot.");
+      return;
+    }
+
+    if (isSlotInPast(form.time, form.date)) {
+      await showWarning("This time slot has already passed for today. Please select a future time slot.");
+      return;
+    }
+
+    const price = Number(
+      String(selectedService.price ?? 0)
+        .replace(/[₱,]/g, "")
+        .trim()
+    );
+
     setSubmitting(true);
 
     try {
-      const { error } = await supabase.from("appointments").insert([
-        {
-          user_id: session.user.id,
-          full_name: form.fullName,
-          email: form.email,
-          phone: form.phone,
-          treatment: selectedService.name,
-          price: Number(
-            String(selectedService.price)
-              .replace(/[₱,]/g, "")
-              .trim()
-          ),
-          ors_required: selectedService.ors_required,
-          ors_number: selectedService.ors_number,
-          ors_amount: selectedService.ors_amount,
-          appointment_date: form.date,
-          appointment_time: form.time,
-          status: "Pending",
-        },
-      ]);
+      const rpcResult = await supabase.rpc("book_customer_appointment", {
+        p_full_name: form.fullName.trim(),
+        p_email: form.email.trim(),
+        p_phone: form.phone.trim(),
+        p_treatment: selectedService.name,
+        p_price: Number.isFinite(price) ? price : 0,
+        p_ors_required: Boolean(selectedService.ors_required),
+        p_ors_number: selectedService.ors_number || "",
+        p_ors_amount: selectedService.ors_amount ?? null,
+        p_appointment_date: form.date,
+        p_appointment_time: form.time,
+      });
 
-      if (error) {
-        await showError(error.message, "Could not book appointment");
-        return;
+      if (rpcResult.error) {
+        const fallback = await supabase.from("appointments").insert([
+          {
+            user_id: session.user.id,
+            full_name: form.fullName.trim(),
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+            treatment: selectedService.name,
+            price: Number.isFinite(price) ? price : 0,
+            treatment_price: Number.isFinite(price) ? price : 0,
+            ors_required: Boolean(selectedService.ors_required),
+            ors_number: selectedService.ors_number || null,
+            ors_amount: selectedService.ors_amount ?? null,
+            appointment_date: form.date,
+            appointment_time: form.time,
+            status: "Pending",
+          },
+        ]);
+
+        if (fallback.error) {
+          await showError(
+            rpcResult.error.message || fallback.error.message,
+            "Could not book appointment"
+          );
+          return;
+        }
       }
 
       setModalOpen(true);
@@ -185,11 +326,38 @@ export default function AppointmentBooking({ session, profile }) {
                 </div>
               ) : (
                 <p className="customer-booking__hint">
-                  Choose a treatment on the left to continue.
+                  Choose a treatment on the left, or pick one below, then confirm your booking.
                 </p>
               )}
 
               <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="treatment">Treatment</label>
+                  <select
+                    id="treatment"
+                    name="treatment"
+                    value={selectedService?.id || ""}
+                    onChange={(e) => {
+                      const next = services.find((service) => service.id === e.target.value);
+                      setSelectedService(next || null);
+                    }}
+                    required
+                    disabled={servicesLoading || services.length === 0}
+                  >
+                    <option value="">
+                      {servicesLoading
+                        ? "Loading treatments..."
+                        : services.length === 0
+                          ? "No treatments available"
+                          : "Select a treatment"}
+                    </option>
+                    {services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name} · {formatPeso(service.price)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div className="form-group">
                   <label htmlFor="fullName">Full name</label>
                   <input
@@ -242,24 +410,81 @@ export default function AppointmentBooking({ session, profile }) {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="time">Preferred time</label>
-                  <select
-                    id="time"
+                  <label htmlFor="time">
+                    Preferred time{" "}
+                    {loadingSlots && (
+                      <span className="slot-loading-hint">(Checking availability...)</span>
+                    )}
+                  </label>
+                  {!form.date ? (
+                    <p className="customer-booking__hint" style={{ margin: "0.2rem 0 0.5rem" }}>
+                      Please select a preferred date first to view available time slots.
+                    </p>
+                  ) : (
+                    <>
+                      <div className="time-slots-grid">
+                        {AVAILABLE_TIME_SLOTS.map((slot) => {
+                          const isBooked = bookedSlots.some(
+                            (b) => b?.trim().toLowerCase() === slot.trim().toLowerCase()
+                          );
+                          const isPast = isSlotInPast(slot, form.date);
+                          const isUnavailable = isBooked || isPast;
+                          const isSelected = form.time === slot;
+
+                          return (
+                            <button
+                              key={slot}
+                              type="button"
+                              disabled={isUnavailable}
+                              className={`time-slot-chip ${isSelected ? "selected" : ""} ${
+                                isUnavailable ? "unavailable" : ""
+                              }`}
+                              onClick={() => setForm((cur) => ({ ...cur, time: slot }))}
+                            >
+                              <span className="time-slot-chip__time">{slot}</span>
+                              {isBooked ? (
+                                <span className="time-slot-chip__badge booked">Booked</span>
+                              ) : isPast ? (
+                                <span className="time-slot-chip__badge past">Passed</span>
+                              ) : (
+                                <span className="time-slot-chip__badge available">Available</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {AVAILABLE_TIME_SLOTS.every(
+                        (slot) =>
+                          bookedSlots.some(
+                            (b) => b?.trim().toLowerCase() === slot.trim().toLowerCase()
+                          ) || isSlotInPast(slot, form.date)
+                      ) && (
+                        <div className="slots-fully-booked-notice">
+                          <span>⚠️ All time slots for this date are unavailable. Please select another date.</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <input
+                    type="hidden"
                     name="time"
+                    id="time"
                     value={form.time}
-                    onChange={handleChange}
                     required
-                  >
-                    <option value="">Select a time slot</option>
-                    <option>09:00 AM</option>
-                    <option>10:30 AM</option>
-                    <option>01:00 PM</option>
-                    <option>02:30 PM</option>
-                    <option>04:00 PM</option>
-                  </select>
+                  />
                 </div>
 
-                <button type="submit" disabled={submitting || !selectedService}>
+                <button
+                  type="submit"
+                  disabled={
+                    submitting ||
+                    servicesLoading ||
+                    services.length === 0 ||
+                    !form.time ||
+                    loadingSlots
+                  }
+                >
                   {submitting ? "Booking..." : "Confirm booking"}
                 </button>
               </form>

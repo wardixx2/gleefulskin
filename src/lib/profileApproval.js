@@ -1,13 +1,18 @@
-export const ADMIN_EMAIL = "admin@glow.com";
+export const ADMIN_EMAIL = "edwardraquipo26@gmail.com";
+export const ADMIN_EMAILS = ["edwardraquipo26@gmail.com", "admin@glow.com"];
 
 export function normalizeRole(role) {
   if (role === "admin") return "admin";
   return "customer";
 }
 
+export function isAdminEmail(email) {
+  return ADMIN_EMAILS.includes(email?.trim().toLowerCase());
+}
+
 export function isAdminUser(profile, email) {
   if (normalizeRole(profile?.role) === "admin") return true;
-  return email?.trim().toLowerCase() === ADMIN_EMAIL;
+  return isAdminEmail(email);
 }
 
 export function isProfileApproved(profile, email) {

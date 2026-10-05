@@ -25,8 +25,11 @@ export function isSameMonth(date, reference = new Date()) {
 }
 
 export function getReportSummary(appointments, reference = new Date()) {
-  const approved = appointments.filter((item) => item.status === "Approved");
+  const approved = appointments.filter(
+    (item) => item.status === "Approved" || item.status === "Completed"
+  );
   const pending = appointments.filter((item) => item.status === "Pending");
+  const completed = appointments.filter((item) => item.status === "Completed");
 
   let dailyIncome = 0;
   let weeklyIncome = 0;
@@ -57,7 +60,8 @@ export function getReportSummary(appointments, reference = new Date()) {
     weeklyIncome,
     monthlyIncome,
     totalIncome,
-    approvedCount: approved.length,
+    approvedCount: appointments.filter((item) => item.status === "Approved").length,
+    completedCount: completed.length,
     pendingCount: pending.length,
     approved,
   };

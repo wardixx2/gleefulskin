@@ -2,15 +2,18 @@ export const APPOINTMENT_STATUS_FILTERS = [
   { id: "all", label: "All" },
   { id: "pending", label: "Pending" },
   { id: "approved", label: "Approved" },
+  { id: "completed", label: "Completed" },
   { id: "cancelled", label: "Cancelled" },
 ];
 
 export function normalizeStatus(status) {
-  return (status || "").toLowerCase().trim();
+  const norm = (status || "").toLowerCase().trim();
+  if (norm === "declined") return "cancelled";
+  return norm;
 }
 
 export function getStatusCounts(appointments) {
-  const counts = { all: appointments.length, pending: 0, approved: 0, cancelled: 0 };
+  const counts = { all: appointments.length, pending: 0, approved: 0, completed: 0, cancelled: 0 };
 
   appointments.forEach((item) => {
     const key = normalizeStatus(item.status);
@@ -25,7 +28,8 @@ export function getStatusCounts(appointments) {
 const STATUS_SORT_ORDER = {
   pending: 0,
   approved: 1,
-  cancelled: 2,
+  completed: 2,
+  cancelled: 3,
 };
 
 function compareWithinStatus(a, b, status) {

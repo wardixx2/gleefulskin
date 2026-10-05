@@ -1,0 +1,1 @@
+grant all on public.mail_settings to service_role;

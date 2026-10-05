@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase.js";
 import { saveSignupProfile } from "../lib/signupProfile.js";
+import { getCustomerLoginUrl, sendAccountCreatedEmail } from "../lib/notifyAccountApproved.js";
 import { showError, showSuccess } from "../lib/alerts.js";
 import "../styles/Register.css";
 
@@ -27,6 +28,7 @@ export default function Register() {
         email: form.email,
         password: form.password,
         options: {
+          emailRedirectTo: getCustomerLoginUrl(),
           data: {
             full_name: form.fullName,
           },
@@ -48,10 +50,24 @@ export default function Register() {
         if (profileResult.error) {
           console.error("Profile save failed:", profileResult.error);
         }
+
+        const accessToken =
+          data.session?.access_token ||
+          (await supabase.auth.getSession()).data.session?.access_token;
+
+        const { error: mailError } = await sendAccountCreatedEmail({
+          email: form.email,
+          fullName: form.fullName,
+          accessToken,
+        });
+
+        if (mailError) {
+          console.error("Signup email failed:", mailError);
+        }
       }
 
       await showSuccess(
-        "Account created! An admin will review your account before you can access the dashboard."
+        "Thank you for creating an account in Gleeful. Please wait a moment while an administrator approves your account. Check your email for a welcome message."
       );
       navigate("/login");
     } finally {

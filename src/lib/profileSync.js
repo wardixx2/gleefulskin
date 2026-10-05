@@ -1,5 +1,5 @@
 import { supabase } from "./supabase.js";
-import { ADMIN_EMAIL, normalizeProfile } from "./profileApproval.js";
+import { isAdminEmail, normalizeProfile } from "./profileApproval.js";
 
 async function fetchProfileRow(userId) {
   const withApproval = await supabase
@@ -43,7 +43,7 @@ export async function loadUserProfile(userId) {
   let profile = await fetchProfileRow(userId);
 
   if (!profile) {
-    const isAdmin = email.trim().toLowerCase() === ADMIN_EMAIL;
+    const isAdmin = isAdminEmail(email);
     const role = isAdmin ? "admin" : "customer";
     const approval_status = isAdmin ? "approved" : "pending";
     const fullName = userData.user.user_metadata?.full_name || "";

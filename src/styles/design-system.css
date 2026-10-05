@@ -243,6 +243,30 @@ h1, h2, h3, h4 {
   max-width: 520px;
 }
 
+.admin-settings-form--mail {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+.admin-settings-form__heading {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.admin-settings-form__hint {
+  margin: 0 0 1.25rem;
+  color: var(--text-muted, #6b5a5a);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.admin-settings-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .admin-settings-form__save {
   width: auto;
   min-width: 180px;
@@ -308,7 +332,14 @@ h1, h2, h3, h4 {
   border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
-.status-pill.cancelled {
+.status-pill.completed {
+  background: #ede9fe;
+  color: #6d28d9;
+  border: 1px solid rgba(109, 40, 217, 0.2);
+}
+
+.status-pill.cancelled,
+.status-pill.declined {
   background: #fdeede;
   color: #d32f2f;
   border: 1px solid rgba(211, 47, 47, 0.15);
@@ -612,6 +643,16 @@ h1, h2, h3, h4 {
   background: #dcedc8;
 }
 
+.appt-btn--complete {
+  background: #ede9fe;
+  color: #6d28d9;
+  border-color: #ddd6fe;
+}
+
+.appt-btn--complete:hover {
+  background: #ddd6fe;
+}
+
 .appt-btn--danger {
   background: var(--white);
   color: #c62828;
@@ -891,4 +932,160 @@ h1, h2, h3, h4 {
 button:focus:not(:focus-visible),
 a:focus:not(:focus-visible) {
   outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Appointment Details Modal Dialog
+   -------------------------------------------------------------------------- */
+.appt-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 37, 32, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2100;
+  padding: 1.25rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.appt-modal-card {
+  background: var(--white);
+  border-radius: var(--radius-lg, 16px);
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.appt-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-soft);
+  background: #faf8f5;
+}
+
+.appt-modal-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--rose-gold);
+}
+
+.appt-modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--text-subtle);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.appt-modal-close-btn:hover {
+  color: var(--text-dark);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.appt-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.appt-modal-treatment-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #fff5f6;
+  border: 1px solid rgba(183, 110, 121, 0.2);
+  border-radius: 12px;
+}
+
+.appt-modal-treatment-box h4 {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+}
+
+.appt-modal-treatment-box p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.appt-modal-treatment-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--rose-gold);
+  white-space: nowrap;
+}
+
+.appt-modal-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.appt-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.appt-modal-field--full {
+  grid-column: 1 / -1;
+}
+
+.appt-modal-field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-subtle);
+}
+
+.appt-modal-field-value {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.appt-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-soft);
+  background: #fafafa;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }

@@ -9,11 +9,12 @@ const STAT_CARDS = [
   { key: "users", label: "Total Users", format: "number", accent: "users" },
   { key: "appointments", label: "Total Appointments", format: "number", accent: "appointments" },
   { key: "pendingCount", label: "Pending Bookings", format: "number", accent: "pending" },
+  { key: "approvedCount", label: "Approved Bookings", format: "number", accent: "approved" },
+  { key: "completedCount", label: "Completed Sessions", format: "number", accent: "approved" },
   { key: "dailyIncome", label: "Daily Income", format: "currency", accent: "income" },
   { key: "weeklyIncome", label: "Weekly Income", format: "currency", accent: "income" },
   { key: "monthlyIncome", label: "Monthly Income", format: "currency", accent: "income" },
   { key: "totalIncome", label: "Total Income", format: "currency", accent: "income-total" },
-  { key: "approvedCount", label: "Approved Bookings", format: "number", accent: "approved" },
 ];
 
 function getTopTreatment(appointments) {
@@ -71,6 +72,7 @@ export default function AdminDashboard() {
     appointments: appointments.length,
     pendingCount: summary.pendingCount,
     approvedCount: summary.approvedCount,
+    completedCount: summary.completedCount || 0,
     dailyIncome: summary.dailyIncome,
     weeklyIncome: summary.weeklyIncome,
     monthlyIncome: summary.monthlyIncome,

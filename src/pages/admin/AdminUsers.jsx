@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getApprovalLabel } from "../../lib/profileApproval.js";
 import { fetchAllProfilesForAdmin, updateProfileAsAdmin, deleteCustomerAsAdmin } from "../../lib/adminUsersApi.js";
-import { sendAccountApprovedEmail } from "../../lib/notifyAccountApproved.js";
+import { LIVE_LOGIN_URL, sendAccountApprovedEmail } from "../../lib/notifyAccountApproved.js";
 import {
   filterUsers,
   getShortUserId,
@@ -75,19 +75,19 @@ export default function AdminUsers() {
     }
 
     if (approval_status === "approved") {
-      const emailResult = await sendAccountApprovedEmail({
+      const { error: mailError } = await sendAccountApprovedEmail({
         email: user.email,
         fullName: displayName,
       });
 
-      if (emailResult.error) {
+      if (mailError) {
         await showWarning(
-          `${displayName} can log in now with their password. The email was not sent because SMTP is not delivering yet. In Resend, verify a domain (or use Gmail SMTP) so mail can reach real customers.`,
-          "Approved — email not sent"
+          `${displayName} is approved and can log in at ${LIVE_LOGIN_URL}, but the email was not sent: ${mailError}`,
+          "Account approved"
         );
       } else {
         await showSuccess(
-          `A login email was sent to ${user.email || displayName}.`,
+          `${displayName} was emailed that their account is approved. They can sign in at ${LIVE_LOGIN_URL} with their email and password.`,
           "Account approved"
         );
       }
@@ -121,13 +121,6 @@ export default function AdminUsers() {
     if (error) {
       await showError(error, "Could not update role");
       return;
-    }
-
-    if (newRole === "admin") {
-      await sendAccountApprovedEmail({
-        email: user.email,
-        fullName: displayName,
-      });
     }
 
     await showSuccess(`${displayName} is now ${newRole}.`, "Role updated");

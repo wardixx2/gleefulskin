@@ -1,8 +1,8 @@
 import { supabase } from "../lib/supabase.js";
-import { ADMIN_EMAIL } from "../lib/profileApproval.js";
+import { isAdminEmail } from "../lib/profileApproval.js";
 
 export async function saveSignupProfile({ userId, fullName, email }) {
-  const isAdmin = email.trim().toLowerCase() === ADMIN_EMAIL;
+  const isAdmin = isAdminEmail(email);
   const role = isAdmin ? "admin" : "customer";
   const approval_status = isAdmin ? "approved" : "pending";
 

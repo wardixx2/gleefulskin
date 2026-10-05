@@ -7,6 +7,7 @@ import AppointmentBooking from "./pages/AppointmentBooking.jsx";
 import AdminPanel from "./pages/AdminPanel.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminAppointments from "./pages/admin/AdminAppointments.jsx";
+import AdminArchives from "./pages/admin/AdminArchives.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
 import AdminTreatments from "./pages/admin/AdminTreatments.jsx";
 import Reports from "./pages/admin/Reports.jsx";
@@ -204,6 +205,7 @@ export default function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="appointments" element={<AdminAppointments />} />
+          <Route path="archives" element={<AdminArchives />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="treatments" element={<AdminTreatments />} />
           <Route path="reports" element={<Reports />} />

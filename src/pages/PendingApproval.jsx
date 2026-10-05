@@ -22,7 +22,7 @@ export default function PendingApproval({ profile }) {
           <p style={{ color: "var(--text-muted)", lineHeight: 1.6, marginBottom: "1.5rem" }}>
             {isRejected
               ? "Your account request was not approved. Please contact the clinic administrator if you believe this is a mistake."
-              : "Thank you for registering! An administrator will review your account shortly. You'll be able to access the dashboard once approved."}
+              : "Thank you for creating an account in Gleeful. Please wait a moment while an administrator approves your account."}
           </p>
           {!isRejected && (
             <p style={{ color: "var(--text-subtle)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
